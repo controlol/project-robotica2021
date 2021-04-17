@@ -1,5 +1,9 @@
 #include "EdgeKernel.hpp"
 
+//#define DEBUG false
+#ifdef DEBUG
+#endif
+
 std::vector<std::vector<uchar>> EdgeKernel::FindEdgeMatrix(std::vector<std::vector<uchar>> picture, int width, int height)
 {
   std::vector<std::vector<uchar>> edgeMatrix;
@@ -139,6 +143,7 @@ void EdgeKernel::FindEdgeMatrix2(uchar *picture, uchar *returnMatrix, int width,
   int resultAngle[width * height];
   int resultWeight[width * height];
   OverlayKernel2(picture, hor, width, height);
+#ifdef DEBUG
   std::cout << "gotten horizontal" << std::endl;
 
   auto horizontal = cv::Mat(height, width, CV_8UC1);
@@ -151,10 +156,14 @@ void EdgeKernel::FindEdgeMatrix2(uchar *picture, uchar *returnMatrix, int width,
   }
 
   cv::imshow("horizontal", horizontal);
-
+#endif
   TurnKernel(true);
+#ifdef DEBUG
   std::cout << "turned kernel" << std::endl;
+#endif
   OverlayKernel2(picture, ver, width, height);
+
+#ifdef DEBUG
   std::cout << "gotten vertical" << std::endl;
 
   auto vertical = cv::Mat(height, width, CV_8UC1);
@@ -167,9 +176,10 @@ void EdgeKernel::FindEdgeMatrix2(uchar *picture, uchar *returnMatrix, int width,
   }
 
   cv::imshow("vertical", vertical);
-
+#endif
   TurnKernel(false);
   GetWeightedMatrix2(hor, ver, resultWeight, width, height);
+#ifdef DEBUG
   std::cout << "gotten weighted matrix" << std::endl;
 
   auto stength = cv::Mat(height, width, CV_8UC1);
@@ -182,8 +192,9 @@ void EdgeKernel::FindEdgeMatrix2(uchar *picture, uchar *returnMatrix, int width,
   }
 
   cv::imshow("resultWeight", stength);
-
+#endif
   GetAngleMatrix2(hor, ver, resultAngle, width, height);
+#ifdef DEBUG
   std::cout << "gotten angle matrix" << std::endl;
 
   auto angle = cv::Mat(height, width, CV_8UC1);
@@ -196,9 +207,11 @@ void EdgeKernel::FindEdgeMatrix2(uchar *picture, uchar *returnMatrix, int width,
   }
 
   cv::imshow("angle", angle);
-
+#endif
   TraceAlongEdges2(resultWeight, resultAngle, edgeMatrix, width, height);
+#ifdef DEBUG
   std::cout << "gotten edge matrix" << std::endl;
+#endif
   for (int i = 0; i < height; i++)
   {
     for (int j = 0; j < width; j++)
@@ -206,7 +219,9 @@ void EdgeKernel::FindEdgeMatrix2(uchar *picture, uchar *returnMatrix, int width,
       returnMatrix[i * width + j] = edgeMatrix[i * width + j];
     }
   }
+#ifdef DEBUG
   std::cout << "returning from finding the edges" << std::endl;
+#endif
 }
 
 void EdgeKernel::GetWeightedMatrix2(int *hor, int *ver, int *resultWeight, int width, int height)
@@ -278,71 +293,73 @@ void EdgeKernel::TraceAlongEdges2(int *resultWeight, int *resultAngle, int *edge
   {
     for (int j = 0; j < width; j++)
     {
+#ifdef DEBUG
       std::cout << "pixel: " << i << "   " << j << std::endl;
       std::cout << "width  height:  " << width << "  " << height << std::endl;
+#endif
       if (resultWeight[i * width + j] > this->lowerThreshold)
       {
         if (resultAngle[i * width + j] == 0)
         {
-          std::cout << "angle = 0" << std::endl;
+          //std::cout << "angle = 0" << std::endl;
           //compare east and west pixels
           //thats done with j
           if (resultWeight[i * width + j] >= resultWeight[i * width + (j - 1)] && resultWeight[i * width + j] >= resultWeight[i * width + (j + 1)])
           {
-            std::cout << "this is the edge " << std::endl;
+            //std::cout << "this is the edge " << std::endl;
             edgeMatrix[i * width + j] = 255;
           }
           else
           {
-            std::cout << "this is NOT the edge" << std::endl;
+            //std::cout << "this is NOT the edge" << std::endl;
             edgeMatrix[i * width + j] = 0;
           }
         }
         if (resultAngle[i * width + j] == 90)
         {
-          std::cout << "angle = 90" << std::endl;
+          //std::cout << "angle = 90" << std::endl;
           //compare north and south pixels
           //thats done with i
           if (resultWeight[i * width + j] >= resultWeight[(i - 1) * width + j] && resultWeight[i * width + j] >= resultWeight[(i + 1) * width + j])
           {
-            std::cout << "this is the edge " << std::endl;
+            //std::cout << "this is the edge " << std::endl;
             edgeMatrix[i * width + j] = 255;
           }
           else
           {
-            std::cout << "this is NOT the edge" << std::endl;
+            //std::cout << "this is NOT the edge" << std::endl;
             edgeMatrix[i * width + j] = 0;
           }
         }
         if (resultAngle[i * width + j] == 135)
         {
-          std::cout << "angle = 135" << std::endl;
+          //std::cout << "angle = 135" << std::endl;
           //compare north-west and south-east pixels
           //i-1 j-1 and i+1 j+1
           if (resultWeight[i * width + j] >= resultWeight[(i - 1) * width + (j - 1)] && resultWeight[i * width + j] >= resultWeight[(i + 1) * width + (j + 1)])
           {
-            std::cout << "this is the edge " << std::endl;
+            //std::cout << "this is the edge " << std::endl;
             edgeMatrix[i * width + j] = 255;
           }
           else
           {
-            std::cout << "this is NOT the edge" << std::endl;
+            //std::cout << "this is NOT the edge" << std::endl;
             edgeMatrix[i * width + j] = 0;
           }
         }
         if (resultAngle[i * width + j] == 45.0)
         {
-          std::cout << "angle = 45" << std::endl;
+          //std::cout << "angle = 45" << std::endl;
           //compare north-east and south-west pixels
           //i-1 j+1 and i+1 j-1
           if (resultWeight[i * width + j] >= resultWeight[(i - 1) * width + (j + 1)] && resultWeight[i * width + j] >= resultWeight[(i + 1) * width + (j - 1)])
           {
-            std::cout << "this is the edge " << std::endl;
+            //std::cout << "this is the edge " << std::endl;
             edgeMatrix[i * width + j] = 255;
           }
           else
           {
-            std::cout << "this is NOT the edge" << std::endl;
+            //std::cout << "this is NOT the edge" << std::endl;
             edgeMatrix[i * width + j] = 0;
           }
         }
@@ -360,7 +377,7 @@ EdgeKernel::EdgeKernel(/* args */)
   //kernel= {1,1,1},
   //      {0,0,0},
   //    {-1,-1,-1};
-  this->lowerThreshold = 10;
+  this->lowerThreshold = 50;
   signed char temp[3][3] = {1, 2, 1,
                             0, 0, 0,
                             -1, -2, -1};

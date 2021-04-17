@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     camera >> frame;
     while (1)
     {
-        cv::resize(frame,frame,cv::Size(frame.cols/4,frame.rows/4));
+        cv::resize(frame,frame,cv::Size(frame.cols,frame.rows));
         
         cv::Mat grey;
         cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
@@ -124,6 +124,7 @@ std::vector<uchar> temp;
         std::vector<std::vector<uchar>> blurredImage;
         //cv::Mat test = grey.clone();
         cv::Mat test(grey.rows,grey.cols,CV_8UC1);
+        cv::Mat edges(grey.rows,grey.cols,CV_8UC1);
         //int uhhh[test.total() * test.elemSize()];
         //bKernel.guassian_blur2D(frame.data, frame.data, frame.cols, frame.rows);
         //blurredImage = im1.BlurImage();
@@ -131,7 +132,7 @@ std::vector<uchar> temp;
         //blurredImage = bKernel.GuassianBlur3(originalImage,grey.rows,grey.cols);
         bKernel.blur4(grey.data, test.data, grey.cols, grey.rows);
         
-        std::cout<<"yeah done with the blur\n";
+        //std::cout<<"yeah done with the blur\n";
        // std::memcpy(test.data,uhhh, test.total() * test.elemSize());
         //std::vector<std::vector<double>> angles;
         /* cv::Mat matAngles(blurredImage.size(), blurredImage[0].size(), CV_8UC1) ;
@@ -141,9 +142,9 @@ std::vector<uchar> temp;
         
         namedWindow("Blurred image", WINDOW_AUTOSIZE);
         imshow("Blurred image",test);
-        eKernel.FindEdgeMatrix2(test.data,test.data,grey.cols,grey.rows);
+        eKernel.FindEdgeMatrix2(test.data,edges.data,grey.cols,grey.rows);
         namedWindow("edges", WINDOW_AUTOSIZE);
-        imshow("edges",test);
+        imshow("edges",edges);
         cv::imshow("Webcam", frame);
         if (cv::waitKey(1000) >= 0)
             break;
