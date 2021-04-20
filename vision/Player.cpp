@@ -1,6 +1,6 @@
-#include "Player.hpp"
+#include"Player.hpp"
 
-Player::Player(/* args */)
+Player::Player()
 {
 }
 
@@ -8,22 +8,9 @@ Player::~Player()
 {
 }
 
-place::place(/* args */) {}
-place::~place() {}
+bool Player::DoesCardBelongToPlayer(place cardPlace){
+   return false;
+}
+void Player::AddCard(card newCard){
 
-int place::GetX()
-{
-    return this->x;
-}
-int place::GetY()
-{
-    return this->y;
-}
-void place::SetX(int newX)
-{
-    this->x = newX;
-}
-void place::SetY(int newY)
-{
-    this->y = newY;
 }

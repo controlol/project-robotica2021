@@ -5,7 +5,7 @@ bool Shape::IsShapeSquare(){
     return answer;
 }
 
-Shape::Shape(/* args */)
+Shape::Shape(std::vector<place> listOfPixels)
 {
 }
 

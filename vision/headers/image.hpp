@@ -40,5 +40,9 @@ MoveDirection newMoveDir(MoveDirection oldDirection);
 MoveDirection NextMoveDir(MoveDirection oldDirection);
 place GetPixel(MoveDirection moveDir, place currentPixel);
 bool IsPixelLine(MoveDirection moveDir, place currentPixel, uchar *edgeMatrix);
+
+std::vector<Shape> DetectShapes2(uchar * edgeMatrix, std::vector<Shape> shapes);
+bool RemovePixelsFromPicture(std::vector<place> pixels);
+place GetNextPixel(place current, int height, int width);
 };
 #endif
