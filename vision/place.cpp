@@ -24,3 +24,8 @@ void place::SetY(int newY)
 {
     this->y = newY;
 }
+ void place::ChangeXY(int newX, int newY)
+ {
+     this->x = newX;
+     this->y = newY;
+ }

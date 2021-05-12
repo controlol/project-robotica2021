@@ -1,8 +1,8 @@
 
 CC = g++
 LIBS = `pkg-config --libs opencv`
-CFLAGS = `pkg-config --cflags opencv` -Iheaders #-Wall -Wextra -funroll-loops
-OBJS = main.o image.o card.o place.o kernel.o table.o blur.o edge.o player.o shape.o
+CFLAGS = `pkg-config --cflags opencv` -Iheaders -std=c++11 #-Wall -Wextra -funroll-loops
+OBJS = main.o image.o card.o place.o kernel.o table.o blur.o edge.o player.o shape.o moore.o spkernel.o
 
 all: edgetest
 
@@ -38,6 +38,12 @@ player.o: headers/Player.hpp Player.cpp
 
 shape.o: headers/Shape.hpp Shape.cpp
 	$(CC) $(CFLAGS) $(LIBS) -c Shape.cpp -o shape.o
+
+moore.o: headers/Moore.hpp Moore.cpp
+	$(CC) $(CFLAGS) $(LIBS) -c Moore.cpp -o moore.o
+
+spkernel.o: headers/SinglePixelKernel.hpp SinglePixelKernel.cpp
+	$(CC) $(CFLAGS) $(LIBS) -c SinglePixelKernel.cpp -o spkernel.o
 
 clean:
 	rm *.o edgetest

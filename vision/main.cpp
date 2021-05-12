@@ -1,6 +1,8 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "headers/image.hpp"
+#include"Moore.hpp"
+#include"card.hpp"
 
 using namespace cv;
 
@@ -76,8 +78,10 @@ static void opencvEdgestuff(int argc, char **argv)
 }
 int main(int argc, char **argv)
 {
+    int count = 0;
     BlurKernel bKernel = BlurKernel();
     EdgeKernel eKernel = EdgeKernel();
+    SinglePixelKernel spKernel = SinglePixelKernel();
     cv::VideoCapture camera(0);
     if (!camera.isOpened())
     {
@@ -89,11 +93,9 @@ int main(int argc, char **argv)
     camera >> frame;
     while (1)
     {
-        cv::resize(frame,frame,cv::Size(frame.cols,frame.rows));
-        
+        cv::resize(frame,frame,cv::Size(frame.cols/2,frame.rows/2));
         cv::Mat grey;
         cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
-
 /*std::vector<std::vector<uchar>>originalImage;
 std::vector<uchar> temp;
     if (grey.isContinuous())
@@ -121,16 +123,17 @@ std::vector<uchar> temp;
         
 
         //image im1 = image(bKernel, eKernel, grey);
-        std::vector<std::vector<uchar>> blurredImage;
-        //cv::Mat test = grey.clone();
-        cv::Mat test(grey.rows,grey.cols,CV_8UC1);
-        cv::Mat edges(grey.rows,grey.cols,CV_8UC1);
+        //std::vector<std::vector<uchar>> blurredImage;
+        cv::Mat test = grey.clone();
+        cv::Mat grey2 = grey.clone();
+       // cv::Mat test(grey.rows,grey.cols,CV_8UC1);
+        //cv::Mat edges(grey.rows,grey.cols,CV_8UC1);
         //int uhhh[test.total() * test.elemSize()];
         //bKernel.guassian_blur2D(frame.data, frame.data, frame.cols, frame.rows);
         //blurredImage = im1.BlurImage();
         //blurredImage = bKernel.gaussBlur_1(originalImage,grey.rows,grey.cols,5);
         //blurredImage = bKernel.GuassianBlur3(originalImage,grey.rows,grey.cols);
-        bKernel.blur4(grey.data, test.data, grey.cols, grey.rows);
+        //bKernel.blur4(grey.data, test.data, grey.cols, grey.rows);
         
         //std::cout<<"yeah done with the blur\n";
        // std::memcpy(test.data,uhhh, test.total() * test.elemSize());
@@ -140,17 +143,64 @@ std::vector<uchar> temp;
             for(int j=0; j<matAngles.cols; ++j)
                 matAngles.at<uchar>(i, j) = blurredImage.at(i).at(j);*/
         
-        namedWindow("Blurred image", WINDOW_AUTOSIZE);
-        imshow("Blurred image",test);
-        eKernel.FindEdgeMatrix2(test.data,edges.data,grey.cols,grey.rows);
-        namedWindow("edges", WINDOW_AUTOSIZE);
-        imshow("edges",edges);
+        //namedWindow("Blurred image", WINDOW_AUTOSIZE);
+        //imshow("Blurred image",test);
+       // eKernel.FindEdgeMatrix2(test.data,edges.data,grey.cols,grey.rows);
+        //namedWindow("edges", WINDOW_AUTOSIZE);
+        //imshow("edges",edges);
+
+        image im1 = image(bKernel,eKernel,spKernel,grey);
+       // im1.GetCardList();
+       std::cout<<"doing moore on the test picture"<<std::endl;
+        MooreNeighborhood moore = MooreNeighborhood();
+        int data[25]={0,0,0,0,0,
+                      0,255,255,255,0,
+                      0,255,0,255,0,
+                      0,255,255,255,0,
+                      0,0,0,0,0};
+        //cv::Mat test = cv::Mat(5,5,CV_8UC1, data);
+        cv::Mat test2 = cv::Mat(5,5,CV_8UC1);
+        //moore.Trace(test.data, 5,5);
+        im1.BlurImage(grey.data);
+        cv::imshow("blur", grey);
+        im1.DetectEdges(grey.data,grey.data);
+        cv::imshow("grey", grey);
+        std::vector<place>tedt;
+        test.data= moore.anotherTracing(grey.data,tedt, grey.cols,grey.rows);
+        Shape testHape=Shape(test.data,tedt);
+        if(testHape.IsShapeSquare()){
+            std::vector<place> corners= testHape.GetCorners();
+            cv::Mat temp =testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
+           // card testCard= card(temp,true);
+           // temp.deallocate();
+        }
+        
+        
+        //std::cout<<"pixels.lenght: " <<tedt.size()<<std::endl;
+       // std::cout<<"this is a card 1: " << moore.IsThisShapeACard(test.data, grey.cols,grey.rows)<<std::endl;
         cv::imshow("Webcam", frame);
+        cv::imshow("new", test);
+       // im1.RemovePixelsFromPicture(grey.data, test.data, grey.cols,grey.rows);
+       // im1.removeSinglePixels(grey.data,grey.cols,grey.rows);
+        //cv::imshow("neeew", grey);
+       // test.data= moore.anotherTracing(grey.data,tedt, grey.cols,grey.rows);
+        //std::cout<<"this is a card 2: " << moore.IsThisShapeACard(test.data, grey.cols,grey.rows)<<std::endl;
+        //testHape=Shape(test.data,tedt);
+       /* if(testHape.IsShapeSquare()){
+            std::vector<place> corners= testHape.GetCorners();
+            testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
+        }*/
+        //cv::imshow("neew", test);
         if (cv::waitKey(1000) >= 0)
             break;
         //namedWindow("grey", WINDOW_AUTOSIZE);
         //imshow("grey",grey);
         camera >> frame;
+        //count--;
+        if(count < 0)
+            break;
     }
-        return 0;
+    //while(cv::waitKey(1000) < 0)
+        //continue;
+    return 0;
 }

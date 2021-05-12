@@ -1,6 +1,6 @@
 #ifndef placeheader
 #define placeheader
-
+#include <iostream>
 class place
 {
 private:
@@ -26,6 +26,35 @@ public:
         }
         return (false);
     }
+      bool operator!=(place p1)
+    {
+        if (p1.GetX() != x || p1.GetY() != y)
+        {
+            return (true);
+        }
+        return (false);
+    }
+    friend std::ostream& operator<<(std::ostream& os,place c1)
+    {
+        os<<c1.GetX()<<"  "<<c1.GetY();
+        return os;
+    }
+    place operator+(place p1)
+    {
+        place temp;
+        temp.SetX(p1.GetX()+x);
+        temp.SetY(p1.GetY()+y);
+        return (temp);
+    }
+    place operator-(place p1)
+    {
+        place temp;
+        temp.SetX(x-p1.GetX());
+        temp.SetY(y-p1.GetY());
+        return (temp);
+    }
 };
+
+
 
 #endif
