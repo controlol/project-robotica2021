@@ -1,6 +1,12 @@
 
 #include "image.hpp"
 
+void image::NewMat(cv::Mat image){
+    this->width = image.cols;
+    this->height = image.rows;
+    this->picture = image;
+}
+
 image::image(BlurKernel blur, EdgeKernel edge, SinglePixelKernel single, cv::Mat image)
 {
     std::cout << "making image\n";
@@ -596,3 +602,4 @@ bool image::removeSinglePixels(uchar *image, int width, int height)
     }
     return false;
 }
+

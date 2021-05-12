@@ -76,25 +76,14 @@ static void opencvEdgestuff(int argc, char **argv)
     CannyThreshold(0, 0);
     waitKey(0);*/
 }
-int main(int argc, char **argv)
-{
-    int count = 0;
-    BlurKernel bKernel = BlurKernel();
-    EdgeKernel eKernel = EdgeKernel();
-    SinglePixelKernel spKernel = SinglePixelKernel();
-    cv::VideoCapture camera(0);
-    if (!camera.isOpened())
-    {
-        std::cout << "Error with gettin camera\n";
-        return 1;
-    }
-    cv::namedWindow("Webcam", WINDOW_AUTOSIZE);
-    cv::Mat frame;
-    camera >> frame;
-    while (1)
-    {
+
+static void stuff(cv::VideoCapture camera, cv::Mat frame, BlurKernel bKernel, EdgeKernel eKernel, SinglePixelKernel spKernel){
+            std::cout<<"imma resizing"<<std::endl;
+        std::cout<<"imma resizing"<<std::endl;
+        std::cout<<"imma resizing"<<std::endl;
         cv::resize(frame,frame,cv::Size(frame.cols/2,frame.rows/2));
         cv::Mat grey;
+        std::cout<<"gmaking it grey"<<std::endl;
         cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
 /*std::vector<std::vector<uchar>>originalImage;
 std::vector<uchar> temp;
@@ -124,6 +113,7 @@ std::vector<uchar> temp;
 
         //image im1 = image(bKernel, eKernel, grey);
         //std::vector<std::vector<uchar>> blurredImage;
+        std::cout<<"saving grey in 2 mat"<<std::endl;
         cv::Mat test = grey.clone();
         cv::Mat grey2 = grey.clone();
        // cv::Mat test(grey.rows,grey.cols,CV_8UC1);
@@ -148,19 +138,12 @@ std::vector<uchar> temp;
        // eKernel.FindEdgeMatrix2(test.data,edges.data,grey.cols,grey.rows);
         //namedWindow("edges", WINDOW_AUTOSIZE);
         //imshow("edges",edges);
-
+        std::cout<<"the image cl<ss"<<std::endl;
         image im1 = image(bKernel,eKernel,spKernel,grey);
        // im1.GetCardList();
        std::cout<<"doing moore on the test picture"<<std::endl;
         MooreNeighborhood moore = MooreNeighborhood();
-        int data[25]={0,0,0,0,0,
-                      0,255,255,255,0,
-                      0,255,0,255,0,
-                      0,255,255,255,0,
-                      0,0,0,0,0};
-        //cv::Mat test = cv::Mat(5,5,CV_8UC1, data);
-        cv::Mat test2 = cv::Mat(5,5,CV_8UC1);
-        //moore.Trace(test.data, 5,5);
+       
         im1.BlurImage(grey.data);
         cv::imshow("blur", grey);
         im1.DetectEdges(grey.data,grey.data);
@@ -171,6 +154,7 @@ std::vector<uchar> temp;
         if(testHape.IsShapeSquare()){
             std::vector<place> corners= testHape.GetCorners();
             cv::Mat temp =testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
+            std::cout<<"yaasss"<<std::endl;
            // card testCard= card(temp,true);
            // temp.deallocate();
         }
@@ -180,6 +164,7 @@ std::vector<uchar> temp;
        // std::cout<<"this is a card 1: " << moore.IsThisShapeACard(test.data, grey.cols,grey.rows)<<std::endl;
         cv::imshow("Webcam", frame);
         cv::imshow("new", test);
+        std::cout<<"shown frames"<<std::endl;
        // im1.RemovePixelsFromPicture(grey.data, test.data, grey.cols,grey.rows);
        // im1.removeSinglePixels(grey.data,grey.cols,grey.rows);
         //cv::imshow("neeew", grey);
@@ -191,13 +176,80 @@ std::vector<uchar> temp;
             testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
         }*/
         //cv::imshow("neew", test);
-        if (cv::waitKey(1000) >= 0)
-            break;
+        
         //namedWindow("grey", WINDOW_AUTOSIZE);
         //imshow("grey",grey);
+        if (!camera.isOpened())
+    {
+        std::cout << "Error with gettin camera\n";
+    }
         camera >> frame;
-        //count--;
-        if(count < 0)
+        std::cout<<"gotten new frame"<<std::endl;
+        
+}
+int main(int argc, char **argv)
+{
+    int count = 0;
+    BlurKernel bKernel = BlurKernel();
+    EdgeKernel eKernel = EdgeKernel();
+    SinglePixelKernel spKernel = SinglePixelKernel();
+    cv::VideoCapture camera(0);
+    if (!camera.isOpened())
+    {
+        std::cout << "Error with gettin camera\n";
+        return 1;
+    }
+    cv::namedWindow("Webcam", WINDOW_AUTOSIZE);
+    cv::Mat frame;
+    camera >> frame;
+
+    cv::Mat test;
+    cv::Mat grey;
+    cv::Mat grey2;
+    cv::Mat temp;
+
+    image im1 = image(bKernel,eKernel,spKernel,grey);
+    MooreNeighborhood moore = MooreNeighborhood();
+    
+    card testCard;
+
+    std::vector<place>tedt;
+    std::vector<place> corners;
+
+    while (1)
+    {
+        cv::resize(frame,frame,cv::Size(frame.cols/2,frame.rows/2));
+       
+        cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
+        test = grey.clone();
+        grey2 = grey.clone();
+
+        im1.NewMat(grey);
+        im1.BlurImage(grey.data);
+        cv::imshow("blur", grey);
+
+        im1.DetectEdges(grey.data,grey.data);
+        cv::imshow("grey", grey);
+
+        tedt.clear();
+        test.data= moore.anotherTracing(grey.data,tedt, grey.cols,grey.rows);
+        Shape testHape=Shape(test.data,tedt);
+
+        if(testHape.IsShapeSquare()){
+            std::cout<<"Shape is square"<<std::endl;
+            corners= testHape.GetCorners();
+            temp =testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
+            testCard= card(temp,true);
+        }
+        else{
+            std::cout<<"Shape is NOT square"<<std::endl;
+            
+        }
+        //testHape.~Shape();
+
+        imshow("Webcam",frame);
+        camera >> frame;
+        if (cv::waitKey(1000) >= 0)
             break;
     }
     //while(cv::waitKey(1000) < 0)

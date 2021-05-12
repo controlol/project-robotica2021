@@ -12,12 +12,13 @@ bool Shape::IsShapeSquare()
     return answer;
 }
  std::vector<place> Shape::GetCorners(){
-        std::vector<place> corners = DouglasPeucker(pixels, 10);
+     if(corners.empty())
+        corners = DouglasPeucker(pixels, 10);
     std::cout << "amount of corners:  " << corners.size() << std::endl;
-    for (int i = 0; i < corners.size(); i++)
+   /* for (int i = 0; i < corners.size(); i++)
     {
         std::cout << "corner " << corners[i] << std::endl;
-    }
+    }*/
     return corners;
 }
 
@@ -72,6 +73,9 @@ bool Shape::IsThisShapeACard(int width, int height)
 std::vector<place> Shape::DouglasPeucker(std::vector<place> pointList, double epsilon)
 {
     //std::cout<<"Recursive algorithm"<<std::endl;
+    if(pointList.empty()){
+        std::cout<<"YO SOMETHING IS WRONG IN Shape.cpp DouglasPeucker()"<<std::endl;
+    }
     double dMax = 0;
     int index = 0;
     int end = pointList.size() - 1;
@@ -135,18 +139,17 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
         return originalImage;
    // int x = points[0].GetX();
     //int y = points[0].GetY();
-    int buffer=0;
     cv::Point corners[1][4];
-    corners[0][0].x = height;
+    corners[0][0].x = height;   //top left
     corners[0][0].y = width;
     std::cout<<"dddd"<<std::endl;
-    corners[0][1].x = 0;
+    corners[0][1].x = 0;        //top right
     corners[0][1].y = width;
     std::cout<<"aaa"<<std::endl;
-    corners[0][2].x = height;
+    corners[0][2].x = height;   //bottem left
     corners[0][2].y = 0;
     std::cout<<"bbb"<<std::endl;
-    corners[0][3].x = 0;
+    corners[0][3].x = 0;        //bottem right
     corners[0][3].y = 0;
     //cv::Point topRight = place(0,width);
     //cv::Point topLeft = place(height,width);
@@ -158,23 +161,23 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
     {
         if (corners[0][0].x > points[i].GetX() && corners[0][0].y > points[i].GetY())
         {
-            corners[0][0].x = points[i].GetX()-buffer;
-            corners[0][0].y = points[i].GetY()-buffer;
+            corners[0][0].x = points[i].GetX();
+            corners[0][0].y = points[i].GetY();
         }
         else if (corners[0][1].x < points[i].GetX() && corners[0][1].y > points[i].GetY())
         {
-            corners[0][1].x = points[i].GetX()+buffer;
-            corners[0][1].y = points[i].GetY()-buffer;
+            corners[0][1].x = points[i].GetX();
+            corners[0][1].y = points[i].GetY();
         }
         else if (corners[0][2].x > points[i].GetX() && corners[0][2].y < points[i].GetY())
         {
-            corners[0][2].x = points[i].GetX()+buffer;
-            corners[0][2].y = points[i].GetY()+buffer;
+            corners[0][2].x = points[i].GetX();
+            corners[0][2].y = points[i].GetY();
         }
         else if (corners[0][3].x < points[i].GetX() && corners[0][3].y < points[i].GetY())
         {
-            corners[0][3].x = points[i].GetX()-buffer;
-            corners[0][3].y = points[i].GetY()+buffer;
+            corners[0][3].x = points[i].GetX();
+            corners[0][3].y = points[i].GetY();
         }
     }
     std::cout<<"calculating the length"<<std::endl;
@@ -215,6 +218,8 @@ std::cout<<"actual cut out"<<std::endl;
     dest.push_back(cv::Point2f(outputWidth,outputHeight));
     std::cout<<"get perspective stuff"<<std::endl;
     cv::Mat warpMatrix =  cv::getPerspectiveTransform(source,dest);  
+    if(warpMatrix.empty())
+        std::cout<<"The warp perspevtive gettinh wnt wrong"<<std::endl;
     std::cout<<"warp shape"<<std::endl;
     try{
     cv::warpPerspective(originalImage,outputImage,warpMatrix,cv::Size(outputWidth,outputHeight));        
@@ -223,6 +228,7 @@ std::cout<<"actual cut out"<<std::endl;
         std::cout<<"Exeption warping image: "<<ex.what()<<std::endl;
     }
     cv::imshow("sdhlfhsod",outputImage);  
+    std::cout<<"whoooohoooo"<<std::endl;
        
     //cv::cvtColor(outputImage, outputImage, cv::COLOR_BGR2GRAY)   ;
     //cv::threshold(outputImage,outputImage,30,255,1);       
@@ -240,6 +246,7 @@ double Shape::lenght(cv::Point *p1, cv::Point *p2){
 
 Shape::Shape(uchar *shapeImage, std::vector<place> listOfPixels)
 {
+    std::cout<<"new shape"<<std::endl;
     this->shapeImage = shapeImage;
     this->pixels = listOfPixels;
 }
@@ -251,4 +258,8 @@ Shape::Shape(std::vector<place> listOfPixels)
 
 Shape::~Shape()
 {
+    delete shapeImage;
+}
+Shape::Shape(){
+
 }

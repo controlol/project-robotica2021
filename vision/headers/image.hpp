@@ -54,5 +54,7 @@ bool RemovePixelsFromPicture(place pixel, uchar *edges);
 void RemovePixelsFromPicture(uchar *image, uchar* pixelsToRemove, int width,int height);
 
 bool removeSinglePixels(uchar *image, int width, int height);
+
+void NewMat(cv::Mat);
 };
 #endif

@@ -12,9 +12,11 @@ private:
     uchar *shapeImage;
     int LowerAreaThreshold = 600;
     int width, height;
+    std::vector<place> corners;
 public:
     Shape(std::vector<place> listOfPixels);
     Shape(uchar *shapeImage,std::vector<place> listOfPixels);
+    Shape();
     ~Shape();
 
     bool IsShapeSquare();
