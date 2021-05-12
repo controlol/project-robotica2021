@@ -174,7 +174,7 @@ std::vector<uchar> temp;
            // card testCard= card(temp,true);
            // temp.deallocate();
         }
-        
+         
         
         //std::cout<<"pixels.lenght: " <<tedt.size()<<std::endl;
        // std::cout<<"this is a card 1: " << moore.IsThisShapeACard(test.data, grey.cols,grey.rows)<<std::endl;
