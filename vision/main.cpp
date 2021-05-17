@@ -214,11 +214,12 @@ int main(int argc, char **argv)
     card testCard;
 
     std::vector<place>tedt;
+    std::vector<place>tedt2;
     std::vector<place> corners;
 
     while (1)
     {
-        cv::resize(frame,frame,cv::Size(frame.cols/2,frame.rows/2));
+        cv::resize(frame,frame,cv::Size(frame.cols,frame.rows));
        
         cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
         test = grey.clone();
@@ -233,6 +234,9 @@ int main(int argc, char **argv)
 
         tedt.clear();
         test.data= moore.anotherTracing(grey.data,tedt, grey.cols,grey.rows);
+        tedt2=moore.anotherTracing2(grey.data,grey.cols,grey.rows);
+        std::cout<<"length of tedt: "<<tedt.size()<<std::endl;
+        std::cout<<"length of tedt2: "<<tedt2.size()<<std::endl;
         Shape testHape=Shape(test.data,tedt);
 
         if(testHape.IsShapeSquare()){
@@ -240,6 +244,7 @@ int main(int argc, char **argv)
             corners= testHape.GetCorners();
             temp =testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
             testCard= card(temp,true);
+           //testCard.DetermenRank();
         }
         else{
             std::cout<<"Shape is NOT square"<<std::endl;

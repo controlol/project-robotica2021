@@ -11,5 +11,9 @@ inline std::ostream& operator << (std::ostream& os, const MoveDirection& obj)
    os << static_cast<std::underlying_type<MoveDirection>::type>(obj);
    return os;
 }
-
+inline std::ostream& operator << (std::ostream& os, const Ranks& obj)
+{
+   os << static_cast<std::underlying_type<MoveDirection>::type>(obj);
+   return os;
+}
 #endif

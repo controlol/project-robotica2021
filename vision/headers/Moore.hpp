@@ -31,6 +31,7 @@ public:
     uchar *anotherTracing(uchar *image,std::vector<place> &pixels, int width, int height);
     uchar *RemovePadding(uchar *targetImage, int width, int height);
     place getPixel(int pos,int height,int width);
+    std::vector<place> anotherTracing2(uchar *image, int width, int height);
 };
 
 #endif

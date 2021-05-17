@@ -6,7 +6,9 @@ const uchar BLACK = 0;
 bool Shape::IsShapeSquare()
 {
     bool answer = false;
-    std::vector<place> corners = GetCorners();
+    if(pixels.empty())  
+        return false;
+    GetCorners();
     if (corners.size() - 1 == 4)
         answer = true;
     return answer;
@@ -140,7 +142,7 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
    // int x = points[0].GetX();
     //int y = points[0].GetY();
     cv::Point corners[1][4];
-    corners[0][0].x = height;   //top left
+    /*corners[0][0].x = height;   //top left
     corners[0][0].y = width;
     std::cout<<"dddd"<<std::endl;
     corners[0][1].x = 0;        //top right
@@ -150,14 +152,18 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
     corners[0][2].y = 0;
     std::cout<<"bbb"<<std::endl;
     corners[0][3].x = 0;        //bottem right
-    corners[0][3].y = 0;
+    corners[0][3].y = 0;*/
     //cv::Point topRight = place(0,width);
     //cv::Point topLeft = place(height,width);
     //cv::Point bottomRight =place(0,0);
     //cv::Point bottomLeft =place(height,0);
     //int min, max;
+    int topleft=height+width;
+    int topRight=0;
+    int bottomleft=topleft;
+    int bottemright=topRight;
     std::cout<<"going to search the corners"<<std::endl;
-    for (int i = 0; i < points.size() - 1; i++)
+   /* for (int i = 0; i < points.size() - 1; i++)
     {
         if (corners[0][0].x > points[i].GetX() && corners[0][0].y > points[i].GetY())
         {
@@ -179,7 +185,42 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
             corners[0][3].x = points[i].GetX();
             corners[0][3].y = points[i].GetY();
         }
+    }*/
+    for (int i = 0; i < points.size(); i++)
+    {
+        if(points[i].GetX()==0||points[i].GetY()==0){
+            std::cout<<"one of the coordinates is 0"<<std::endl;
+            continue;
+        }
+        if((points[i].GetX()+points[i].GetY())<topleft){
+            topleft=(points[i].GetX()+points[i].GetY());
+            corners[0][0].x = points[i].GetX();
+            corners[0][0].y = points[i].GetY();
+            std::cout<<"found topleft"<<std::endl;
+        }
+         if((points[i].GetX()-points[i].GetY())>topRight)
+        {
+            topRight=(points[i].GetX()-points[i].GetY());
+            corners[0][1].x = points[i].GetX();
+            corners[0][1].y = points[i].GetY();
+            std::cout<<"found topright"<<std::endl;
+        }
+         if((points[i].GetX()+points[i].GetY())>bottemright)
+        {
+            bottemright=(points[i].GetX()+points[i].GetY());
+            corners[0][2].x = points[i].GetX();
+            corners[0][2].y = points[i].GetY();
+            std::cout<<"found bottomright"<<std::endl;
+        }
+         if((points[i].GetX()-points[i].GetY())<bottomleft)
+        {
+            bottomleft=(points[i].GetX()-points[i].GetY());
+            corners[0][3].x = points[i].GetX();
+            corners[0][3].y = points[i].GetY();
+            std::cout<<"found bottomleft "<<std::endl;
+        }
     }
+    
     std::cout<<"calculating the length"<<std::endl;
     double cardwidth = lenght(corners[0], corners[1]);
     double cardlength = lenght(corners[0], corners[3]);
@@ -204,7 +245,8 @@ std::cout<<"actual cut out"<<std::endl;
     cv::bitwise_and(originalImage, mask, result);
     cv::imshow("ujyhtgrfde",result);*/
      std::vector<cv::Point2f> source,dest;
-     
+     std::cout<<"corners from left to right"<<points[0]<<"] ["<<points[1]<<"] ["<<points[2]<<"] ["<<points[3]<<"] ["<<points[4]<<std::endl;
+    std::cout<<"corners from left to right"<<corners[0][0]<<" "<<corners[0][1]<<" "<<corners[0][2]<<" "<<corners[0][3]<<std::endl;
     source.push_back(corners[0][0]);
     source.push_back(corners[0][1]);
     source.push_back(corners[0][3]);
