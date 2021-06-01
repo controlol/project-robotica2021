@@ -377,7 +377,7 @@ EdgeKernel::EdgeKernel(/* args */)
   //kernel= {1,1,1},
   //      {0,0,0},
   //    {-1,-1,-1};
-  this->lowerThreshold = 50;
+  this->lowerThreshold = 60;
   signed char temp[3][3] = {1, 2, 1,
                             0, 0, 0,
                             -1, -2, -1};

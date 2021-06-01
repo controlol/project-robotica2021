@@ -237,14 +237,16 @@ int main(int argc, char **argv)
         tedt2=moore.anotherTracing2(grey.data,grey.cols,grey.rows);
         std::cout<<"length of tedt: "<<tedt.size()<<std::endl;
         std::cout<<"length of tedt2: "<<tedt2.size()<<std::endl;
+        cv::imshow("moore1",test);
+        //cv::imshow("moore2",tedt2);
         Shape testHape=Shape(test.data,tedt);
 
         if(testHape.IsShapeSquare()){
             std::cout<<"Shape is square"<<std::endl;
             corners= testHape.GetCorners();
             temp =testHape.CutOutShape(corners,grey.cols,grey.rows, grey2);
-            testCard= card(temp,true);
-           //testCard.DetermenRank();
+            testCard= card(temp,false);
+           testCard.DetermenRank();
         }
         else{
             std::cout<<"Shape is NOT square"<<std::endl;

@@ -28,5 +28,8 @@ public:
     void DetermenSuit();
     place GetCardPlace();
     void CutRankAndSuit();
+
+    cv::Mat allignLeftTop(cv::Mat thisCard,int width,int height);
+    std::vector<uchar> BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage, int width, int height);
 };
 #endif
