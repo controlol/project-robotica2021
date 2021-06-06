@@ -1,6 +1,6 @@
 
 CC = g++
-LIBS = `pkg-config --libs opencv`
+LIBS = `pkg-config --libs opencv` -llept -ltesseract
 CFLAGS = `pkg-config --cflags opencv` -Iheaders -std=c++11 #-Wall -Wextra -funroll-loops
 OBJS = main.o image.o card.o place.o kernel.o table.o blur.o edge.o player.o shape.o moore.o spkernel.o
 

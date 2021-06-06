@@ -1,112 +1,213 @@
 #include "card.hpp"
 
-void card::DetermenRank()
-{
-    double same=0;
-    int rows;
-    int cols;
+void card::DetermenRank(){
+   /* const char *path="/home/pi/Desktop/git/project-robotica2021/vision/images/rank.png";
+    //cv::imwrite(path, rankImage);
+    char* outText;
+    tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+    if(api->Init(NULL,"eng")){
+        fprintf(stderr,"could not initialize tesseract.\n");
+        return;
+    }
+    Pix *image = pixRead(path);
+    api->SetImage(image);
+    outText=api->GetUTF8Text();
+    std::cout<<"tekst is: "<<outText<<std::endl;
+    api->End();
+    delete api;
+    delete [] outText;
+    pixDestroy(&image);*/
+
     int width = rankImage.cols;
     int height = rankImage.rows;
-    double SAD;
-    double minSAD=256.0;
-    int searchImage;
-    int compareImage;
-    double bestSad;
-    double cardSad=0.0;
+    double ranksum=0;
+    double rankdiff=0;
+    double bestRankMatchDiff=10000;
     int cardNumber=0;
-
-    std::vector<uchar> loadedImage;
-    std::vector<uchar> thisCard;
-    thisCard.assign(rankImage.data, rankImage.data + rankImage.total() * rankImage.channels());
-    std::vector<uchar> thisCardtmp;
+    cv::Mat output(height,width,rankImage.type());
     for (int k = 0; k < 13; k++)
     {
-        loadedImage.assign(ranks[k].data, ranks[k].data + ranks[k].total() * ranks[k].channels());
-        thisCardtmp = BinaryAnd(loadedImage, thisCard, width, height);
+        ranksum=0;
+         //BinaryAnd(loadedImage, thisCard,temp.data, width, height);
         //std::cout << "came here2\n";
-        if (loadedImage.empty())
-            std::cout << "loaded image is empty\n";
-        if (thisCard.empty())
-            std::cout << "this card is empty\n";
+        /*std::cout<<"cols: "<<rankImage.cols<<std::endl;
+        std::cout<<"rows: "<<rankImage.rows<<std::endl;
+        std::cout<<"cols: "<<ranks[k].cols<<std::endl;
+        std::cout<<"rows: "<<ranks[k].rows<<std::endl;*/
+        absdiff(rankImage,ranks[k],output);
         cv::imshow("compared to", ranks[k]);
-        //cv::waitKey(0);
-        SAD=0.0;
-        same=0.0;
-        for (size_t x = 0; x < width; x++)
+        cv::imshow("result", output);
+        
+        for (size_t i = 0; i < width*height; i++)
         {
-            for (size_t y = 0; y < height; y++)
-            {
-                if(loadedImage[y*width+x]==thisCardtmp[y*width+x]){
-                    same++;
-                }
-
-
-
-                
-
-                /*for (size_t j = 0; j < width; j++)
-                {
-                    for (size_t i = 0; i < height; i++)
-                    {
-                        
-                        searchImage=thisCard[(x+y)*width+(y+i)];
-                        compareImage=loadedImage[j*width+i];
-
-                        SAD=abs(searchImage-compareImage);
-                    }
-                    
-                }
-                if(minSAD>SAD){
-                    minSAD=SAD;
-                    rows=x;
-                    cols=y;
-                    bestSad=SAD;
-                }*/
-            }
-            
-        }/*
-        std::cout<<"best sad: "<<bestSad<<std::endl;
-        if(bestSad<cardSad){
-            cardSad=bestSad;
-            std::cout<<"card sad: "<<cardSad<<std::endl;
-            std::cout<<"best card was: "<<cardNumber<<std::endl;
-            cardNumber=k;
-            std::cout<<"best card is now: "<<cardNumber<<std::endl;
-        }*/
-        SAD=(same/thisCardtmp.size())*100.0;
-       if(SAD>cardSad){
-            cardSad=SAD;
-            std::cout<<"card sad: "<<cardSad<<std::endl;
+            ranksum+=output.data[i];
+        }
+        std::cout<<ranksum<<std::endl;
+        rankdiff=ranksum/255;
+        if(rankdiff<bestRankMatchDiff){
+            bestRankMatchDiff=rankdiff;
             std::cout<<"best card was: "<<cardNumber<<std::endl;
             cardNumber=k;
             std::cout<<"best card is now: "<<cardNumber<<std::endl;
         }
+        cv::imshow("compared to", ranks[k]);
+        //std::cout << "rank: " << rank << std::endl;
+        std::cout << "cardNumber: " << cardNumber << std::endl;
+        cv::waitKey(0);
     }
-    rank = static_cast<Ranks>(cardNumber);
-    cv::imshow("compared to", ranks[cardNumber]);
-    std::cout << "rank: " << rank << std::endl;
-    std::cout << "cardNumber: " << cardNumber << std::endl;
-    //std::cout << "compare: " << comaprisonNumber << std::endl;
 }
+void card::absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out){
+    if(in1.cols!=in2.cols)
+    {
+        printf("Make sure the input images have the same cols");
+        return;
+    }
+     if(in1.rows!=in2.rows){
+         printf("Make sure the input images have the same rows");
+        return;
+    }
+    if(in1.channels()!=in2.channels()){
+        std::cout<<": "<<in1.channels()<<std::endl;
+        std::cout<<": "<<in2.channels()<<std::endl;
+        printf("Make sure the input images have the same channels");
+        return;
+    }
+    for (int i = 0; i < in1.rows; i++)
+    {
+        for (int j = 0; j < in1.cols; j++)
+        {
+            for (int k = 0; k < in1.channels(); k++)
+            {
+                out.at<uchar>(i,j,k)=abs(static_cast<int>(in1.at<uchar>(i,j,k)-in2.at<uchar>(i,j,k)));
+                //std::cout<<(int)out.at<uchar>(i,j,k)<<std::endl;
+            }
+            
+        }
+        
+    }
+    
+}
+
+// void card::DetermenRank()
+// {
+//     double same = 0.0;
+//     int rows;
+//     int cols;
+//     int width = rankImage.cols;
+//     int height = rankImage.rows;
+//     double SAD;
+//     double minSAD = 256.0;
+//     int searchImage;
+//     int compareImage;
+//     double bestSad;
+//     double cardSad = 0.0;
+//     int cardNumber = 0;
+
+//     std::vector<uchar> loadedImage;
+//     std::vector<uchar> thisCard;
+//    // cv::Mat temp(height, width, CV_8UC1);
+//    // temp=255;
+//     thisCard.assign(rankImage.data, rankImage.data + rankImage.total() * rankImage.channels());
+//     std::vector<uchar> thisCardtmp;
+//     for (int k = 0; k < 13; k++)
+//     {
+//         loadedImage.assign(ranks[k].data, ranks[k].data + ranks[k].total() * ranks[k].channels());
+//          //BinaryAnd(loadedImage, thisCard,temp.data, width, height);
+//         //std::cout << "came here2\n";
+//         if (loadedImage.empty())
+//             std::cout << "loaded image is empty\n";
+//         if (thisCard.empty())
+//             std::cout << "this card is empty\n";
+//         cv::imshow("compared to", ranks[k]);
+//         //cv::imshow("result", temp);
+        
+//         SAD = 0.0;
+//         same = 0.0;
+//         for (size_t x = 0; x < width; x++)
+//         {
+//             for (size_t y = 0; y < height; y++)
+//             {
+//                 if (loadedImage[y * width + x] == thisCardtmp[y * width + x])
+//                 {
+//                     same++;
+//                 }
+
+//                 /*for (size_t j = 0; j < width; j++)
+//                 {
+//                     for (size_t i = 0; i < height; i++)
+//                     {
+                        
+//                         searchImage=thisCard[(x+y)*width+(y+i)];
+//                         compareImage=loadedImage[j*width+i];
+
+//                         SAD=abs(searchImage-compareImage);
+//                     }
+                    
+//                 }
+//                 if(minSAD>SAD){
+//                     minSAD=SAD;
+//                     rows=x;
+//                     cols=y;
+//                     bestSad=SAD;
+//                 }*/ 
+//             }
+
+//         } /*
+//         std::cout<<"best sad: "<<bestSad<<std::endl;
+//         if(bestSad<cardSad){
+//             cardSad=bestSad;
+//             std::cout<<"card sad: "<<cardSad<<std::endl;
+//             std::cout<<"best card was: "<<cardNumber<<std::endl;
+//             cardNumber=k;
+//             std::cout<<"best card is now: "<<cardNumber<<std::endl;
+//         }*/
+//         SAD = (same / thisCardtmp.size()) * 100.0;
+//         std::cout << "card sad: " << SAD << std::endl;
+//         std::cout << "same pixels:: " << same << std::endl;
+//         if (SAD > cardSad)
+//         {
+//             cardSad = SAD;
+            
+//             std::cout << "best card was: " << cardNumber << std::endl;
+//             cardNumber = k;
+//             std::cout << "best card is now: " << cardNumber << std::endl;
+//         }
+//     }
+//     rank = static_cast<Ranks>(cardNumber);
+//     cv::imshow("compared to", ranks[cardNumber]);
+//     std::cout << "rank: " << rank << std::endl;
+//     std::cout << "cardNumber: " << cardNumber << std::endl;
+//     cv::waitKey(0);
+//     //std::cout << "compare: " << comaprisonNumber << std::endl;
+// }
 void card::DetermenSuit()
 {
 }
 
-std::vector<uchar> card::BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage, int width, int height){
-    std::vector<uchar> thisCardtmp;
+void card::BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage,uchar* out, int width, int height)
+{
+    //uchar thisCardtmp[width*height];
+    //cv::Mat temp(width, height, CV_8UC1);
+    //temp=255;
+    //thisCardtmp.assign(temp.data, temp.data + temp.total() * temp.channels());
     for (int col = 0; col < width; col++)
     {
         for (int row = 0; row < height; row++)
         {
-            if(mask[row*width+col]==0){
-                thisCardtmp.push_back(targetImage[row*width+col]);
+            if (mask[row * width + col] == 0)
+            {
+                out[row * width + col] =targetImage[row * width + col];
+                //temp.at<uchar>(row, col,1) = targetImage[row * width + col];
             }
-            else{
-                thisCardtmp.push_back(255);
+            else
+            {
+                out[row * width + col] ==255;
+                //==temp.data[row * width + col] = 255;
             }
         }
     }
-    return thisCardtmp;
+    //cv::imshow("result", temp);
+   // return thisCardtmp;
 }
 
 cv::Mat card::allignLeftTop(cv::Mat thisCard, int width, int height)
@@ -133,34 +234,34 @@ cv::Mat card::allignLeftTop(cv::Mat thisCard, int width, int height)
 
             if (thisCard.data[row * width + col] == 0 && row < rows)
             {
-                
+
                 rows = row;
-                std::cout<<"changed rows to: "<<rows<<"\n";
+                std::cout << "changed rows to: " << rows << "\n";
             }
             if (thisCard.data[row * width + col] == 0 && col < cols)
             {
-                
+
                 cols = col;
-                std::cout<<"changed cols to: "<<cols<<"\n";
+                std::cout << "changed cols to: " << cols << "\n";
             }
         }
     }
-    
-        std::cout<<"rows: cols: "<<rows<<" "<<cols<<"\n";
+
+    std::cout << "rows: cols: " << rows << " " << cols << "\n";
     //thisCard.data[rows * width + cols] = 50;
     cv::imshow("out2", thisCard);
     // move rank to the top left corner and diff the images
-    cv::Mat out(thisCard.rows,thisCard.cols,CV_8UC1);
-    out=255;
+    cv::Mat out(thisCard.rows, thisCard.cols, CV_8UC1);
+    out = 255;
     for (int col = cols; col < width; col++)
     {
         //std::cout << "came here1\n";
         for (int row = rows; row < height; row++)
         {
-            out.data[(row-rows)*width+(col-cols)]=thisCard.data[(row) * width + col];
+            out.data[(row - rows) * width + (col - cols)] = thisCard.data[(row)*width + col];
         }
     }
-    std::cout<<"Made it here\n";
+    std::cout << "Made it here\n";
     //cv::imshow("out", thisCard);
     //rankImage(cv::Rect(cols, rows, width - cols, height - rows)).copyTo(out(cv::Rect(0, 0, width , height )));
     return out;
@@ -174,7 +275,8 @@ void card::CutRankAndSuit()
 
     cv::Mat rank = cardImage(cv::Rect(0, 0, rankWidth, rankHeight));
     cv::Mat suit = cardImage(cv::Rect(0, rankHeight, rankWidth, suitHeight));
-
+ const char *path="/home/pi/Desktop/git/project-robotica2021/vision/images/rank.png";
+    cv::imwrite(path, rank);
     std::cout << "rank widht,height" << rank.cols << "  " << rank.rows << std::endl;
     cv::threshold(rank, rankImage, 170, 255, cv::THRESH_BINARY);
     cv::threshold(suit, suitImage, 170, 255, cv::THRESH_BINARY);
@@ -186,8 +288,8 @@ void card::CutRankAndSuit()
     std::vector<uchar> thisSuit;
     thisSuit.assign(suitImage.data, suitImage.data + suitImage.total() * suitImage.channels());
     std::cout << "going to allign!\n";*/
-    rankImage= allignLeftTop(rankImage, rank.cols, rank.rows);
-    suitImage= allignLeftTop(suitImage, suit.cols, suit.rows);
+    rankImage = allignLeftTop(rankImage, rank.cols, rank.rows);
+    suitImage = allignLeftTop(suitImage, suit.cols, suit.rows);
     cv::imshow("rank", rankImage);
     cv::imshow("suit", suitImage);
     std::cout << "allign!\n";
@@ -199,6 +301,15 @@ place GetCardPlace()
     return place(0, 0);
 }
 
+void card::sharpenCard(cv::Mat image){
+    //sharpened=original+(original-blurred)*amount
+    BlurKernel bkernel = BlurKernel();
+    cv::Mat out=image;
+    cv::Mat result=image;
+    bkernel.blur4(image.data,out.data,image.cols,image.rows);
+    result=image+(image-out)*20;
+    cv::imshow("enhanced",result);
+}
 card::card(cv::Mat image, bool savePictures)
 {
     std::cout << "making card\n";
@@ -239,10 +350,12 @@ card::card(cv::Mat image, bool savePictures)
         for (int i = 0; i < 13; i++)
         {
             ranks.push_back(cv::imread(imPath + rankString[i] + ".png"));
+            cv::cvtColor(ranks[i],ranks[i], cv::COLOR_BGR2GRAY);
         }
         for (int i = 0; i < 4; i++)
         {
             suits.push_back(cv::imread(imPath + suitString[i] + ".png"));
+            cv::cvtColor(suits[i],suits[i], cv::COLOR_BGR2GRAY);
         }
         if (ranks.empty())
             std::cout << "the ranks were not loaded\n";
@@ -250,6 +363,12 @@ card::card(cv::Mat image, bool savePictures)
             std::cout << "the first picture is empty\n";
     }
     std::cout << "made card\n";
+    sharpenCard(cardImage);
+    cv::Mat out;
+    cv::cvtColor(image,image,cv::COLOR_GRAY2BGR);
+    cv::detailEnhance(image, out);
+    cv::imshow("detail enhance",out);
+    cardImage=out;
 }
 card::card()
 {

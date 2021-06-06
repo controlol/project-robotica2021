@@ -3,6 +3,9 @@
 #include "enums.hpp"
 #include "place.hpp"
 #include <opencv2/opencv.hpp>
+#include <tesseract/baseapi.h>
+#include <leptonica/allheaders.h>
+#include "BlurKernel.hpp"
 
 class card
 {
@@ -20,8 +23,9 @@ private:
     place thing;
     std::vector<cv::Mat> ranks;
     std::vector<cv::Mat> suits;
+
 public:
-    card(cv::Mat image,bool);
+    card(cv::Mat image, bool);
     ~card();
     card();
     void DetermenRank();
@@ -29,7 +33,9 @@ public:
     place GetCardPlace();
     void CutRankAndSuit();
 
-    cv::Mat allignLeftTop(cv::Mat thisCard,int width,int height);
-    std::vector<uchar> BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage, int width, int height);
+    cv::Mat allignLeftTop(cv::Mat thisCard, int width, int height);
+    void BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage, uchar *out, int width, int height);
+    void absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out);
+    void sharpenCard(cv::Mat image);
 };
 #endif

@@ -187,6 +187,8 @@ std::vector<uchar> temp;
         std::cout<<"gotten new frame"<<std::endl;
         
 }
+
+
 int main(int argc, char **argv)
 {
     int count = 0;
@@ -240,7 +242,7 @@ int main(int argc, char **argv)
         cv::imshow("moore1",test);
         //cv::imshow("moore2",tedt2);
         Shape testHape=Shape(test.data,tedt);
-
+        //sharpenCard(grey2);
         if(testHape.IsShapeSquare()){
             std::cout<<"Shape is square"<<std::endl;
             corners= testHape.GetCorners();

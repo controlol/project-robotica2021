@@ -17,10 +17,10 @@ bool Shape::IsShapeSquare()
      if(corners.empty())
         corners = DouglasPeucker(pixels, 10);
     std::cout << "amount of corners:  " << corners.size() << std::endl;
-   /* for (int i = 0; i < corners.size(); i++)
+    for (int i = 0; i < corners.size(); i++)
     {
         std::cout << "corner " << corners[i] << std::endl;
-    }*/
+    }
     return corners;
 }
 
