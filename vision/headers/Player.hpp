@@ -8,7 +8,7 @@ class Player
 private:
     /* data */
    // card cards[2];
-    //place playerPlace;
+    place playerPlace;
     bool firstCardToBePlaced;
 public:
     Player();

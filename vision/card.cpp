@@ -20,14 +20,19 @@ void card::DetermenRank(){
 
     int width = rankImage.cols;
     int height = rankImage.rows;
-    double ranksum=0;
+    double ranksum=0,ranksum2=0;
     double rankdiff=0;
     double bestRankMatchDiff=10000;
+    double rankdiff2=0;
+    double bestRankMatchDiff2=10000;
+    int cardNumber2=0;
     int cardNumber=0;
     cv::Mat output(height,width,rankImage.type());
+    cv::Mat output2(height,width,rankImage.type());
     for (int k = 0; k < 13; k++)
     {
         ranksum=0;
+        ranksum2=0;
          //BinaryAnd(loadedImage, thisCard,temp.data, width, height);
         //std::cout << "came here2\n";
         /*std::cout<<"cols: "<<rankImage.cols<<std::endl;
@@ -35,26 +40,57 @@ void card::DetermenRank(){
         std::cout<<"cols: "<<ranks[k].cols<<std::endl;
         std::cout<<"rows: "<<ranks[k].rows<<std::endl;*/
         absdiff(rankImage,ranks[k],output);
+        //absdiff(rankImage,ranks2[k],output2);
         cv::imshow("compared to", ranks[k]);
         cv::imshow("result", output);
+        //v::imshow("result2", output2);
         
         for (size_t i = 0; i < width*height; i++)
         {
             ranksum+=output.data[i];
+            //ranksum2+=output2.data[i];
         }
         std::cout<<ranksum<<std::endl;
+        //std::cout<<ranksum2<<std::endl;
         rankdiff=ranksum/255;
+        //rankdiff2=ranksum2/255;
         if(rankdiff<bestRankMatchDiff){
             bestRankMatchDiff=rankdiff;
             std::cout<<"best card was: "<<cardNumber<<std::endl;
             cardNumber=k;
             std::cout<<"best card is now: "<<cardNumber<<std::endl;
         }
+        /*if(rankdiff2<bestRankMatchDiff2){
+            bestRankMatchDiff2=rankdiff2;
+            std::cout<<"2best card was: "<<cardNumber2<<std::endl;
+            cardNumber2=k;
+            std::cout<<"2best card is now: "<<cardNumber2<<std::endl;
+        }*/
+        std::cout << "cardNumber: " << cardNumber+1 << std::endl;
+        //std::cout << "2cardNumber: " << cardNumber2+1 << std::endl;
         cv::imshow("compared to", ranks[k]);
         //std::cout << "rank: " << rank << std::endl;
-        std::cout << "cardNumber: " << cardNumber << std::endl;
-        cv::waitKey(0);
+        //cv::waitKey(0);
     }
+    /*if(cardNumber==cardNumber2) 
+            std::cout << "final cardNumber: " << cardNumber+1 << std::endl;*/
+            std::cout << "FINAL cardNumber: " << cardNumber+1 << std::endl;
+       // cv::waitKey(0);
+        rank = static_cast<Ranks>(cardNumber);
+   /* std::cout<<"did i guess correct? y/n\n"<<std::endl;
+        char key = cv::waitKey(0);
+        std::string name;
+        if(key){
+            std::cout<<"what was it? (ace,two,three,four,five,six,seven,eight,nine,ten,jack,queen,king)\n"<<std::endl;
+            std::cin>>name;
+            
+        } */
+
+
+
+}
+Ranks card::GetRank(){
+    return rank;
 }
 void card::absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out){
     if(in1.cols!=in2.cols)
@@ -310,13 +346,16 @@ void card::sharpenCard(cv::Mat image){
     result=image+(image-out)*20;
     cv::imshow("enhanced",result);
 }
-card::card(cv::Mat image, bool savePictures)
+card::card(cv::Mat image, bool savePictures, std::vector<place> corners)
 {
     std::cout << "making card\n";
+    cardPlace.SetX((corners[0].GetX()+corners[1].GetX()+corners[2].GetX()+corners[3].GetX())/4);
+    cardPlace.SetY((corners[0].GetY()+corners[1].GetY()+corners[2].GetY()+corners[3].GetY())/4);
     this->cardImage = image;
     cardHeight = image.rows;
     cardWidth = image.cols;
     std::string rankString[13] = {"ace", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king"};
+    std::string rankString2[13] = {"ace2", "two2", "three2", "four2", "five2", "six2", "seven2", "eight2", "nine2", "ten2", "jack2", "queen2", "king2"};
     std::string suitString[4] = {"heart", "club", "diamond", "spade"};
     std::string imPath = "/home/pi/Desktop/git/project-robotica2021/vision/images/";
     CutRankAndSuit();
@@ -351,6 +390,8 @@ card::card(cv::Mat image, bool savePictures)
         {
             ranks.push_back(cv::imread(imPath + rankString[i] + ".png"));
             cv::cvtColor(ranks[i],ranks[i], cv::COLOR_BGR2GRAY);
+            ranks2.push_back(cv::imread(imPath + rankString2[i] + ".png"));
+            cv::cvtColor(ranks2[i],ranks2[i], cv::COLOR_BGR2GRAY);
         }
         for (int i = 0; i < 4; i++)
         {
