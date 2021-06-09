@@ -22,10 +22,11 @@ private:
     cv::Mat cardImage;
     place thing;
     std::vector<cv::Mat> ranks;
+    std::vector<cv::Mat> ranks2;
     std::vector<cv::Mat> suits;
 
 public:
-    card(cv::Mat image, bool);
+    card(cv::Mat image, bool, std::vector<place> corner);
     ~card();
     card();
     void DetermenRank();
@@ -37,5 +38,6 @@ public:
     void BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage, uchar *out, int width, int height);
     void absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out);
     void sharpenCard(cv::Mat image);
+    std::string GetRank();
 };
 #endif

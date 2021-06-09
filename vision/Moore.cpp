@@ -4,26 +4,15 @@
 const uchar WHITE = 255;
 const uchar BLACK = 0;
 
-std::vector<place> MooreNeighborhood::anotherTracing2(uchar *image, int width, int height){
+void MooreNeighborhood::RemoveContour(uchar *image, int width, int height){
 
-    //std::cout<<"inside function"<<std::endl;
-    //bool inside = false;
     int pos = 0;
-    std::vector<place> pixels;
 
     // Need to start by padding the image by 1 pixel
     uchar *paddedImage = padImage(image, width, height, BLACK);
+    uchar *returnImage = padImage(image, width, height, BLACK);
     
-   // uchar *targetImage = (uchar *)malloc(sizeof(uchar) * (height) * (width));
-    //targetImage = padImage(targetImage, width, height, WHITE);
-
-    /*for (int y = 0; y < (height + 2); y++)
-    {
-        for (int x = 0; x < (width + 2); x++)
-        {
-            targetImage[x + y * (width + 2)] = WHITE;
-        }
-    }*/
+   
 
 for (int y = 0; y < (height + 2); y++)
     {
@@ -31,24 +20,6 @@ for (int y = 0; y < (height + 2); y++)
         {
             pos = x + y * (width + 2);
 
-            // Scan for BLACK pixel
-           /* if (targetImage[pos] == BLACK && !inside) // Entering an already discovered border
-            {
-               //std::cout<<"Entering an already discovered border: "<<pos<<" "<<x<<" "<<y<<std::endl;
-                inside = true;
-            }
-            else *//*if (paddedImage[pos] == WHITE && inside) // Already discovered border point
-            {
-               // std::cout<<"Already discovered border point: "<<pos<<" "<<x<<" "<<y<<std::endl;
-                continue;
-            }
-            else if (paddedImage[pos] == BLACK && inside) // Leaving a border
-            {
-              // std::cout<<"Leaving a border: "<<pos<<" "<<x<<" "<<y<<std::endl;
-                inside = false;
-            }
-            else */
-            
             if (paddedImage[pos] == WHITE /*&& !inside*/) // Undiscovered border point
             {
                 //std::cout<<"Undiscovered border point: "<<pos<<" "<<x<<" "<<y<<std::endl;
@@ -96,12 +67,15 @@ for (int y = 0; y < (height + 2); y++)
                                 break;
                             }
                         }
-
+                        if(returnImage[pos]==WHITE)  
+                            returnImage[pos]=BLACK;
+                        if(returnImage[checkPosition]==WHITE)  
+                            returnImage[pos]=BLACK;
                         checkLocationNr = newCheckLocationNr; // Update which neighborhood position we should check next
                         pos = checkPosition;                  //the current posistion becomes the pixel we just found
                         counter2 = 0;                       // Reset the counter that keeps track of how many neighbors we have visited
                         //targetImage[checkPosition] = BLACK; // Set the border pixel
-                        pixels.push_back(getPixel(pos,height+2,width+2));
+                        //pixels.push_back(getPixel(pos,height+2,width+2));
                         //std::cout<<"pixels.lenght: " <<pixels.size()<<std::endl;
                     }
                     else
@@ -123,15 +97,11 @@ for (int y = 0; y < (height + 2); y++)
                         }
                     }
                 }
-                //std::cout<<"DONE Trace around the neighborhood"<<std::endl;
-                //return RemovePadding(targetImage,width,height);
-                return pixels;
-
+                image=RemovePadding(returnImage,width,height);
+                return;
             }
         }
     }
-    //return targetImage;
-    return pixels;
     
 
 }

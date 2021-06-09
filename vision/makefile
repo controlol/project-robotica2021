@@ -7,7 +7,7 @@ OBJS = main.o image.o card.o place.o kernel.o table.o blur.o edge.o player.o sha
 all: edgetest
 
 edgetest: $(OBJS)
-	$(CC) $(OBJS) -o edgetest $(LIBS)
+	$(CC) $(OBJS) -g -o edgetest $(LIBS)
 
 place.o:  headers/place.hpp place.cpp
 	$(CC) $(CFLAGS) $(LIBS) -c place.cpp -o place.o

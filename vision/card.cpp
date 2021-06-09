@@ -28,7 +28,7 @@ void card::DetermenRank(){
     int cardNumber2=0;
     int cardNumber=0;
     cv::Mat output(height,width,rankImage.type());
-    cv::Mat output2(height,width,rankImage.type());
+    //cv::Mat output2(height,width,rankImage.type());
     for (int k = 0; k < 13; k++)
     {
         ranksum=0;
@@ -89,8 +89,53 @@ void card::DetermenRank(){
 
 
 }
-Ranks card::GetRank(){
-    return rank;
+std::string card::GetRank(){
+    switch (rank)
+   {
+   case ace:
+      return "ace";
+      break;
+   case two:
+      return "two";
+      break;
+   case three:
+      return "three";
+      break;
+   case four:
+      return "four";
+      break;
+   case five:
+      return "five";
+      break;
+   case six:
+      return "six";
+      break;
+   case seven:
+      return "seven";
+      break;
+   case eight:
+      return "eight";
+      break;
+   case nine:
+      return "nine";
+      break;
+   case ten:
+      return "ten";
+      break;
+   case jack:
+      return "jack";
+      break;
+   case queen:
+      return "queen";
+      break;
+   case king:
+      return "king";
+      break;
+
+   default:
+      break;
+   }
+   return "nothing";
 }
 void card::absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out){
     if(in1.cols!=in2.cols)
@@ -332,9 +377,9 @@ void card::CutRankAndSuit()
     //cv::waitKey(0);
     std::cout << "DONE!\n";
 }
-place GetCardPlace()
+place card::GetCardPlace()
 {
-    return place(0, 0);
+    return cardPlace;
 }
 
 void card::sharpenCard(cv::Mat image){

@@ -16,11 +16,11 @@ bool Shape::IsShapeSquare()
  std::vector<place> Shape::GetCorners(){
      if(corners.empty())
         corners = DouglasPeucker(pixels, 10);
-    std::cout << "amount of corners:  " << corners.size() << std::endl;
-    for (int i = 0; i < corners.size(); i++)
+    //std::cout << "amount of corners:  " << corners.size() << std::endl;
+   /* for (int i = 0; i < corners.size(); i++)
     {
         std::cout << "corner " << corners[i] << std::endl;
-    }
+    }*/
     return corners;
 }
 
@@ -288,7 +288,7 @@ double Shape::lenght(cv::Point *p1, cv::Point *p2){
 
 Shape::Shape(uchar *shapeImage, std::vector<place> listOfPixels)
 {
-    std::cout<<"new shape"<<std::endl;
+    //std::cout<<"new shape"<<std::endl;
     this->shapeImage = shapeImage;
     this->pixels = listOfPixels;
 }
@@ -300,7 +300,7 @@ Shape::Shape(std::vector<place> listOfPixels)
 
 Shape::~Shape()
 {
-    delete shapeImage;
+    //delete shapeImage;
 }
 Shape::Shape(){
 

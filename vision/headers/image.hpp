@@ -35,7 +35,7 @@ std::vector<card> GetCardList();
 void  BlurImage(uchar *picture);
 void DetectEdges(uchar *picture, uchar *result);
 std::vector<Shape> DetectShapes(uchar *edgeMatrix);
-std::vector<card>  DetermenCards(std::vector<Shape> Shapes);
+void  DetermenCards(std::vector<Shape> Shapes,std::vector<card> &returnCards);
 
 int GetWidth();
 int GetHeight();
@@ -56,5 +56,6 @@ void RemovePixelsFromPicture(uchar *image, uchar* pixelsToRemove, int width,int 
 bool removeSinglePixels(uchar *image, int width, int height);
 
 void NewMat(cv::Mat);
+bool IsImageEmpty(uchar *edgeMatrix, int width, int height);
 };
 #endif

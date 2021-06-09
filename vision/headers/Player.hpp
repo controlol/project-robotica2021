@@ -7,14 +7,14 @@ class Player
 {
 private:
     /* data */
-   // card cards[2];
+    std::vector<card> cards;
     place playerPlace;
     bool firstCardToBePlaced;
 public:
-    Player();
+    Player(place);
     ~Player();
     bool DoesCardBelongToPlayer(place);
-    void AddCard(card);
+    void AddCard(card,bool);
 };
 #endif
 

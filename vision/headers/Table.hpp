@@ -10,7 +10,7 @@ private:
     std::vector<card> openCards;
     std::vector<Player> players;
 public:
-    Table(/* args */);
+    Table(int);
     ~Table();
 
     image TakePicture();

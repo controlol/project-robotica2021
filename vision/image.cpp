@@ -1,7 +1,8 @@
 
 #include "image.hpp"
 
-void image::NewMat(cv::Mat image){
+void image::NewMat(cv::Mat image)
+{
     this->width = image.cols;
     this->height = image.rows;
     this->picture = image;
@@ -17,6 +18,7 @@ image::image(BlurKernel blur, EdgeKernel edge, SinglePixelKernel single, cv::Mat
     std::vector<uchar> temp;
     this->width = image.cols;
     this->height = image.rows;
+    moore = MooreNeighborhood();
     /*if (image.isContinuous())
     {
         temp.assign(image.data, image.data + image.total() * image.channels());
@@ -45,10 +47,11 @@ image::~image()
 }
 std::vector<card> image::GetCardList()
 {
-    std::cout << width << "  " << height << std::endl;
+    //std::cout << width << "  " << height << std::endl;
     std::cout << "retrieving cards\n";
     std::vector<card> returnCards;
     std::vector<Shape> shapes;
+    std::vector<place> shapeSides;
 
     uchar edgeMatrix[width * height];
     uchar blurredImage[width * height];
@@ -63,17 +66,19 @@ std::vector<card> image::GetCardList()
     std::cout << "edged image\n";
     show.data = edgeMatrix;
     cv::imshow("edges", show);
-    for (int i = 0; i < height; i++)
+    shapes = DetectShapes(edgeMatrix);
+    std::cout << shapes.size() << std::endl;
+    /*returnCards=*/DetermenCards(shapes, returnCards);
+
+    std::cout << "done with making a card list" << std::endl;
+    /*for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
             edgeMatrix[i * width + j] = 0;
         }
     }
-    /*
------
- |
-*/
+
     edgeMatrix[1] = 255;         //0 1
     edgeMatrix[2] = 255;         //0 2
     edgeMatrix[3] = 255;         //0 3
@@ -100,7 +105,7 @@ std::vector<card> image::GetCardList()
             shapes.erase(shapes.begin() + i);
         }
     }
-
+*/
     //returnCards = DetermenCards(shapes);
     return returnCards;
 }
@@ -113,24 +118,55 @@ void image::DetectEdges(uchar *picture, uchar *edgeMatrix)
     //return edgeMatrix;
 }
 
-std::vector<Shape> image::DetectShapes(uchar *edgeMatrix)
+bool image::IsImageEmpty(uchar *edgeMatrix, int width, int height)
 {
-    std::vector<Shape> shapes;
-    std::vector<place>shapePixels;
-    bool isNotEmpty;
-    while (isNotEmpty)
+    bool empty=true;
+    for (int i = 0; i < height; i++)
     {
-        uchar *targetImage = moore.anotherTracing(edgeMatrix,shapePixels, width, height);
-        isNotEmpty = removeSinglePixels(edgeMatrix, width, height);
-        shapes.push_back(Shape(targetImage,shapePixels));
-        for (int i = 0; i < shapes.size(); i++)
+        for (int j = 0; j < width; j++)
         {
-            if (!shapes[i].IsThisShapeACard(width, height))
+            if (edgeMatrix[i * width + j] == 255)
             {
-                shapes.erase(shapes.begin() + i);
+               empty=false;
             }
         }
     }
+    return empty;
+}
+
+std::vector<Shape> image::DetectShapes(uchar *edgeMatrix)
+{
+    std::vector<Shape> shapes;
+    std::vector<place> shapePixels;
+    bool isEmpty=false;
+    cv::Mat temp= cv::Mat(height, width, CV_8UC1);
+    while (!isEmpty)
+    {
+        uchar *targetImage = moore.anotherTracing(edgeMatrix, shapePixels, width, height);
+        //moore.RemoveContour(edgeMatrix, width, height);
+        //isEmpty=IsImageEmpty(edgeMatrix,width,height);
+        //removeSinglePixels(edgeMatrix, width, height);
+        isEmpty=IsImageEmpty(edgeMatrix,width,height);
+        RemovePixelsFromPicture(edgeMatrix,targetImage,width,height);
+        shapes.push_back(Shape(targetImage, shapePixels));
+        //std::cout << "pushed a shape \n";
+        //for (int i = 0; i < shapes.size(); i++)
+        //{
+        /* if (shapes.size()>0)
+            {
+                if(!shapes.back().IsThisShapeACard(width, height)){
+                std::cout<<"shape is not card i think \n";
+                shapes.pop_back();
+                std::cout<<"removed last shape \n";
+                }
+            }*/
+        //}
+       // std::cout << "uhhh test\n";
+        //temp.data=edgeMatrix;
+        //cv::imshow("edgeee",temp);
+        
+    }
+   //cv::waitKey(0);
     return shapes;
 }
 
@@ -336,16 +372,26 @@ bool image::RemovePixelsFromPicture(place pixel, uchar *edges)
     return isEmpty;
 }
 
-std::vector<card> image::DetermenCards(std::vector<Shape> shapes)
+void image::DetermenCards(std::vector<Shape> shapes, std::vector<card> &returnCards)
 {
-    std::vector<card> cards;
+    //std::vector<card> cards;
     for (int i = 0; i < shapes.size(); i++)
     {
-        cards.push_back(card());
+        if (shapes[i].IsShapeSquare())
+        {
+            std::cout << "Shape is square" << std::endl;
+            std::vector<place> corners = shapes[i].GetCorners();
+            cv::Mat temp = shapes[i].CutOutShape(corners, width, height, picture);
+            returnCards.push_back(card(temp, false,corners));
+            returnCards[i].DetermenRank();
+        }
+        /*cards.push_back(card());
         cards[i].DetermenRank();
-        cards[i].DetermenSuit();
+        cards[i].DetermenSuit();*/
+        std::cout << "going through list" << std::endl;
     }
-    return cards;
+    std::cout << "returning cards " << returnCards.size() << std::endl;
+    //return cards;
 }
 void image::BlurImage(uchar *returnMatrix)
 {
@@ -602,4 +648,3 @@ bool image::removeSinglePixels(uchar *image, int width, int height)
     }
     return false;
 }
-
