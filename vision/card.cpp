@@ -453,6 +453,7 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners)
     cv::Mat out;
     cv::cvtColor(image,image,cv::COLOR_GRAY2BGR);
     cv::detailEnhance(image, out);
+    cv::detailEnhance(out, out);
     cv::imshow("detail enhance",out);
     cardImage=out;
 }

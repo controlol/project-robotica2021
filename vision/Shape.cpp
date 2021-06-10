@@ -292,10 +292,22 @@ Shape::Shape(uchar *shapeImage, std::vector<place> listOfPixels)
     this->shapeImage = shapeImage;
     this->pixels = listOfPixels;
 }
-/*outdated do not use!*/
+/*outdated do not use! UNLESS you don't plan on using the check for card function*/ 
 Shape::Shape(std::vector<place> listOfPixels)
 {
     this->pixels = listOfPixels;
+}
+
+Shape::Shape(std::vector<cv::Point> listOfPixels)
+{
+    std::vector<place> newList;
+    for (size_t i = 0; i < listOfPixels.size(); i++)
+    {
+        newList.push_back(place(listOfPixels[i].x,listOfPixels[i].y));
+    }
+    
+
+    this->pixels = newList;
 }
 
 Shape::~Shape()

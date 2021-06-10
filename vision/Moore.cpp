@@ -1,6 +1,6 @@
 
 #include "Moore.hpp"
-
+#include <opencv2/opencv.hpp>
 const uchar WHITE = 255;
 const uchar BLACK = 0;
 
@@ -224,6 +224,9 @@ for (int y = 0; y < (height + 2); y++)
                     }
                 }
                 //std::cout<<"DONE Trace around the neighborhood"<<std::endl;
+               // cv::Mat temppp;
+               // temppp.data=targetImage;
+                //cv::imshow("lol", temppp);
                 return RemovePadding(targetImage,width,height);
             }
         }

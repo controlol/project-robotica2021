@@ -66,8 +66,9 @@ std::vector<card> image::GetCardList()
     std::cout << "edged image\n";
     show.data = edgeMatrix;
     cv::imshow("edges", show);
+
     shapes = DetectShapes(edgeMatrix);
-    std::cout << shapes.size() << std::endl;
+    //std::cout << shapes.size() << std::endl;
     /*returnCards=*/DetermenCards(shapes, returnCards);
 
     std::cout << "done with making a card list" << std::endl;
@@ -114,7 +115,7 @@ void image::DetectEdges(uchar *picture, uchar *edgeMatrix)
 {
     //std::vector<std::vector<uchar>> edgeMatrix;
     //edgeMatrix.resize(width,std::vector<uchar>(height));
-    edgeKernel.FindEdgeMatrix2(picture, edgeMatrix, GetWidth(), GetHeight());
+    edgeKernel.FindEdgeMatrix2(picture, edgeMatrix, width, height);
     //return edgeMatrix;
 }
 
@@ -134,6 +135,37 @@ bool image::IsImageEmpty(uchar *edgeMatrix, int width, int height)
     return empty;
 }
 
+// std::vector<Shape> image::DetectShapes(uchar *edgeMatrix)
+// {
+//     std::vector<Shape> shapes;
+//     std::vector<place> shapePixels;
+//     bool isEmpty=false;
+//     cv::Mat temp= cv::Mat(height, width, CV_8UC1);
+//     while (!isEmpty)
+//     {
+//         uchar *targetImage = moore.anotherTracing(edgeMatrix, shapePixels, width, height);
+//         isEmpty=IsImageEmpty(edgeMatrix,width,height);
+//         RemovePixelsFromPicture(edgeMatrix,targetImage,width,height);
+//         shapes.push_back(Shape(targetImage, shapePixels));
+//         if(shapes.back().IsShapeSquare()){
+//             //RomoveFromEdges(shapePixels,shapes.back().GetCorners(),edgeMatrix);
+//         }
+    
+//     }
+//    //cv::waitKey(0);
+//     return shapes;
+// }
+/*
+void RemoveFromEdges(std::vector<place>shapePixels,std::vector<place>corners,uchar* edgeMatrix){
+    for(int i, i<width;i++){
+        for (size_t j = 0; j < count; j++)
+        {
+            if()
+        }
+        
+    }
+}*/
+
 std::vector<Shape> image::DetectShapes(uchar *edgeMatrix)
 {
     std::vector<Shape> shapes;
@@ -149,6 +181,16 @@ std::vector<Shape> image::DetectShapes(uchar *edgeMatrix)
         isEmpty=IsImageEmpty(edgeMatrix,width,height);
         RemovePixelsFromPicture(edgeMatrix,targetImage,width,height);
         shapes.push_back(Shape(targetImage, shapePixels));
+        if(shapes.back().IsShapeSquare()){
+            std::cout<<"is square\n";
+            std::vector<place>corners=shapes.back().GetCorners();
+            temp.data=edgeMatrix;
+            cv::rectangle(temp,cv::Point(corners[0].GetX(),corners[0].GetY()),cv::Point(corners[2].GetX(),corners[2].GetY()),0,cv::FILLED);
+            edgeMatrix=temp.data;
+        }
+       /* else{
+            shapes.pop_back();
+        }*/
         //std::cout << "pushed a shape \n";
         //for (int i = 0; i < shapes.size(); i++)
         //{
@@ -162,9 +204,9 @@ std::vector<Shape> image::DetectShapes(uchar *edgeMatrix)
             }*/
         //}
        // std::cout << "uhhh test\n";
-        //temp.data=edgeMatrix;
+        temp.data=edgeMatrix;
         //cv::imshow("edgeee",temp);
-        
+        //cv::waitKey(0);
     }
    //cv::waitKey(0);
     return shapes;

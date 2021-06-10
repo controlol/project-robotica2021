@@ -15,6 +15,7 @@ private:
     std::vector<place> corners;
 public:
     Shape(std::vector<place> listOfPixels);
+    Shape(std::vector<cv::Point> listOfPixels);
     Shape(uchar *shapeImage,std::vector<place> listOfPixels);
     Shape();
     ~Shape();
