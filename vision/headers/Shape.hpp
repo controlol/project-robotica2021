@@ -30,6 +30,7 @@ public:
     cv::Mat CutOutShape(std::vector<place> points, int width, int height, cv::Mat originalImage);
     double lenght(cv::Point *p1, cv::Point *p2);
      std::vector<place> GetCorners();
+     double GetDistance(place p1, place p2);
 };
 #endif
 

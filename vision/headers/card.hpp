@@ -39,5 +39,6 @@ public:
     void absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out);
     void sharpenCard(cv::Mat image);
     std::string GetRank();
+    std::string GetSuit();
 };
 #endif

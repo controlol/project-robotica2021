@@ -9,18 +9,45 @@ bool Shape::IsShapeSquare()
     if(pixels.empty())  
         return false;
     GetCorners();
-    if (corners.size() - 1 == 4)
+    std::vector<int> tempIndexes;
+    for(int i=0; i<corners.size();i++){
+        place prevPoint = corners[ (i-1)>=0? i-1 : corners.size()-1];
+        place currentPoint = corners[i];
+        place nextPoint = corners[ (i+1)<corners.size()? i+1 : 0];
+      // double *Line1 =GetLine(prevPoint,currentPoint);
+        //double *Line2 =GetLine(nextPoint,currentPoint);
+        double ab =GetDistance(prevPoint,currentPoint);
+        double bc =GetDistance(nextPoint,currentPoint);
+        double ac =GetDistance(prevPoint,nextPoint);
+        double cosb=pow(ac,2)-pow(ab,2)-pow(bc,2);
+        cosb =cosb/(2*ab*bc);
+        double angle = 180-acos(cosb)*180/M_PI;
+        if(angle>120)
+            tempIndexes.push_back(i);
+        std::cout<<"angle between the points is: "<<angle;
+        //if(prevPoint.GetX())
+    }
+    for(int i=0; i<tempIndexes.size();i++){
+        corners.erase(corners.begin()+tempIndexes[i]);
+    }
+    std::cout<<"corner size: "<<corners.size()<<std::endl;
+    if (corners.size()  == 4)
         answer = true;
     return answer;
 }
+
+double Shape::GetDistance(place p1, place p2){
+    return sqrt(pow(p2.GetX()-p1.GetX(),2)+pow(p2.GetY()-p1.GetY(),2));
+}
+
  std::vector<place> Shape::GetCorners(){
      if(corners.empty())
         corners = DouglasPeucker(pixels, 10);
-    //std::cout << "amount of corners:  " << corners.size() << std::endl;
-   /* for (int i = 0; i < corners.size(); i++)
+    std::cout << "amount of corners:  " << corners.size() << std::endl;
+    for (int i = 0; i < corners.size(); i++)
     {
         std::cout << "corner " << corners[i] << std::endl;
-    }*/
+    }
     return corners;
 }
 
@@ -137,7 +164,7 @@ double *Shape::GetLine(place point1, place point2)
 cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv::Mat originalImage)
 {
     std::cout<<"starting the cutout"<<std::endl;
-    if(points.size()<5) 
+    if(points.size()<4) 
         return originalImage;
    // int x = points[0].GetX();
     //int y = points[0].GetY();

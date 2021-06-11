@@ -137,6 +137,27 @@ std::string card::GetRank(){
    }
    return "nothing";
 }
+std::string card::GetSuit(){
+    switch (suit)
+   {
+   case h:
+      return "heart";
+      break;
+   case s:
+      return "spade";
+      break;
+   case d:
+      return "diamond";
+      break;
+   case c:
+      return "club";
+      break;
+
+   default:
+      break;
+   }
+   return "nothing";
+}
 void card::absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out){
     if(in1.cols!=in2.cols)
     {
@@ -263,6 +284,45 @@ void card::absdiff(cv::Mat in1, cv::Mat in2, cv::Mat out){
 // }
 void card::DetermenSuit()
 {
+ int width = suitImage.cols;
+    int height = suitImage.rows;
+    double ranksum=0;
+    double rankdiff=0;
+    double bestRankMatchDiff=10000;
+    int cardNumber2=0;
+    int cardNumber=0;
+    cv::Mat output(height,width,suitImage.type());
+    for (int k = 0; k < 4; k++)
+    {
+        ranksum=0;
+        /*std::cout<<"cols: "<<rankImage.cols<<std::endl;
+        std::cout<<"rows: "<<rankImage.rows<<std::endl;
+        std::cout<<"cols: "<<ranks[k].cols<<std::endl;
+        std::cout<<"rows: "<<ranks[k].rows<<std::endl;*/
+        absdiff(suitImage,suits[k],output);
+        cv::imshow("compared to", suits[k]);
+        cv::imshow("result", output);
+        
+        for (size_t i = 0; i < width*height; i++)
+        {
+            ranksum+=output.data[i];
+        }
+        std::cout<<ranksum<<std::endl;
+        rankdiff=ranksum/255;
+        if(rankdiff<bestRankMatchDiff){
+            bestRankMatchDiff=rankdiff;
+            std::cout<<"best card was: "<<cardNumber<<std::endl;
+            cardNumber=k;
+            std::cout<<"best card is now: "<<cardNumber<<std::endl;
+        }
+        std::cout << "cardNumber: " << cardNumber+1 << std::endl;
+        cv::imshow("compared to", suits[k]);
+        //cv::waitKey(0);
+    }
+            std::cout << "FINAL card suit: " << cardNumber+1 << std::endl;
+       // cv::waitKey(0);
+     suit = static_cast<Suits>(cardNumber);
+
 }
 
 void card::BinaryAnd(std::vector<uchar> mask, std::vector<uchar> targetImage,uchar* out, int width, int height)
@@ -315,13 +375,13 @@ cv::Mat card::allignLeftTop(cv::Mat thisCard, int width, int height)
 
             if (thisCard.data[row * width + col] == 0 && row < rows)
             {
-
-                rows = row;
+                if(row!=0 &&col>3)
+                    rows = row;
                 std::cout << "changed rows to: " << rows << "\n";
             }
             if (thisCard.data[row * width + col] == 0 && col < cols)
             {
-
+                if(col!=0&&row>3)
                 cols = col;
                 std::cout << "changed cols to: " << cols << "\n";
             }
@@ -354,13 +414,18 @@ void card::CutRankAndSuit()
     int rankHeight = 48;
     int suitHeight = 55;
 
-    cv::Mat rank = cardImage(cv::Rect(0, 0, rankWidth, rankHeight));
-    cv::Mat suit = cardImage(cv::Rect(0, rankHeight, rankWidth, suitHeight));
- const char *path="/home/pi/Desktop/git/project-robotica2021/vision/images/rank.png";
-    cv::imwrite(path, rank);
+// std::vector<std::vector<cv::Point>> contours;
+// std::vector<cv::Vec4i> hierarchy;
+// cv::Mat rankSuit = cardImage(cv::Rect(0,0,rankWidth,rankHeight+suitHeight));
+    cv::Mat rank = cardImage(cv::Rect(2, 8, rankWidth, rankHeight));
+    cv::Mat suit = cardImage(cv::Rect(0, rankHeight+10, rankWidth, suitHeight));
+    cv::imshow("rank2", rank);
+    cv::imshow("suit2", suit);
     std::cout << "rank widht,height" << rank.cols << "  " << rank.rows << std::endl;
-    cv::threshold(rank, rankImage, 170, 255, cv::THRESH_BINARY);
-    cv::threshold(suit, suitImage, 170, 255, cv::THRESH_BINARY);
+// cv::Canny(rankSuit,rankSuit,30,60,3);
+// findContours(rankSuit, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+    cv::threshold(rank, rankImage, 130, 255, cv::THRESH_BINARY);
+    cv::threshold(suit, suitImage, 130, 255, cv::THRESH_BINARY);
     cv::imshow("rank1", rankImage);
     cv::imshow("suit1", suitImage);
     //cv::waitKey(0);
@@ -401,7 +466,7 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners)
     cardWidth = image.cols;
     std::string rankString[13] = {"ace", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king"};
     std::string rankString2[13] = {"ace2", "two2", "three2", "four2", "five2", "six2", "seven2", "eight2", "nine2", "ten2", "jack2", "queen2", "king2"};
-    std::string suitString[4] = {"heart", "club", "diamond", "spade"};
+    std::string suitString[4] = {"heart", "club", "spade", "diamond"};
     std::string imPath = "/home/pi/Desktop/git/project-robotica2021/vision/images/";
     CutRankAndSuit();
     if (savePictures)
@@ -435,8 +500,8 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners)
         {
             ranks.push_back(cv::imread(imPath + rankString[i] + ".png"));
             cv::cvtColor(ranks[i],ranks[i], cv::COLOR_BGR2GRAY);
-            ranks2.push_back(cv::imread(imPath + rankString2[i] + ".png"));
-            cv::cvtColor(ranks2[i],ranks2[i], cv::COLOR_BGR2GRAY);
+            //ranks2.push_back(cv::imread(imPath + rankString2[i] + ".png"));
+            //cv::cvtColor(ranks2[i],ranks2[i], cv::COLOR_BGR2GRAY);
         }
         for (int i = 0; i < 4; i++)
         {
@@ -449,13 +514,13 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners)
             std::cout << "the first picture is empty\n";
     }
     std::cout << "made card\n";
-    sharpenCard(cardImage);
-    cv::Mat out;
-    cv::cvtColor(image,image,cv::COLOR_GRAY2BGR);
-    cv::detailEnhance(image, out);
-    cv::detailEnhance(out, out);
-    cv::imshow("detail enhance",out);
-    cardImage=out;
+    //sharpenCard(cardImage);
+    //cv::Mat out;
+    //cv::cvtColor(image,image,cv::COLOR_GRAY2BGR);
+    //cv::detailEnhance(image, out);
+    //cv::detailEnhance(out, out);
+    //cv::imshow("detail enhance",out);
+    //cardImage=out;
 }
 card::card()
 {

@@ -232,6 +232,11 @@ int main(int argc, char **argv)
     EdgeKernel eKernel = EdgeKernel();
     SinglePixelKernel spKernel = SinglePixelKernel();
     cv::VideoCapture camera(0);
+   // camera.release();
+    //camera.set(CAP_PROP_BRIGHTNESS,120);
+    //camera.set(CAP_PROP_CONTRAST,500);
+    //camera.set(CAP_PROP_SATURATION,100);
+  //  camera.set(CAP_PROP_AUTO_WB,1);
     if (!camera.isOpened())
     {
         std::cout << "Error with gettin camera\n";
@@ -267,7 +272,7 @@ int main(int argc, char **argv)
     cardPlaces.push_back(cv::Rect(300, 0, 100, 150));   //p2c2
     cardPlaces.push_back(cv::Rect(400, 0, 100, 150));   //p3c1
     cardPlaces.push_back(cv::Rect(500, 0, 100, 150));   //p3c2
-    cardPlaces.push_back(cv::Rect(0, 0, 100, 150));     //p4c1
+    cardPlaces.push_back(cv::Rect(0, 300, 100, 150));     //p4c1
     cardPlaces.push_back(cv::Rect(100, 300, 100, 150)); //p4c2
     cardPlaces.push_back(cv::Rect(200, 300, 100, 150)); //p5c1
     cardPlaces.push_back(cv::Rect(300, 300, 100, 150)); //p5c2
@@ -275,11 +280,23 @@ int main(int argc, char **argv)
     cardPlaces.push_back(cv::Rect(500, 300, 100, 150)); //p6c2
 
     cardPlaces.push_back(cv::Rect(0, 150, 100, 150)); //opencard 1
-    cardPlaces.push_back(cv::Rect(0, 150, 100, 150)); //oc2
-    cardPlaces.push_back(cv::Rect(0, 150, 100, 150)); //oc3
-    cardPlaces.push_back(cv::Rect(0, 150, 100, 150)); //oc4
-    cardPlaces.push_back(cv::Rect(0, 150, 100, 150)); //oc5
+    cardPlaces.push_back(cv::Rect(100, 150, 100, 150)); //oc2
+    cardPlaces.push_back(cv::Rect(200, 150, 100, 150)); //oc3
+    cardPlaces.push_back(cv::Rect(300, 150, 100, 150)); //oc4
+    cardPlaces.push_back(cv::Rect(400, 150, 100, 150)); //oc5
 
+    while(cv::waitKey(1000) < 0){
+        cv::line(frame,cv::Point(100,0), cv::Point(100,400),Scalar(255,0,0));
+        cv::line(frame,cv::Point(200,0), cv::Point(200,400),Scalar(255,0,0));
+        cv::line(frame,cv::Point(300,0), cv::Point(300,400),Scalar(255,0,0));
+        cv::line(frame,cv::Point(400,0), cv::Point(400,400),Scalar(255,0,0));
+        cv::line(frame,cv::Point(500,0), cv::Point(500,400),Scalar(255,0,0));
+
+        cv::line(frame,cv::Point(0,150), cv::Point(500,150),Scalar(255,0,0));
+        cv::line(frame,cv::Point(0,300), cv::Point(500,300),Scalar(255,0,0));
+        cv::imshow("Webcam", frame);
+         camera >> frame;
+    }
     cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
     cv::Mat cardt;
     cv::Mat blllurr;
@@ -294,7 +311,7 @@ int main(int argc, char **argv)
         blllurr = cardt.clone();
         edddges = cardt.clone();
         usablecard = cardt;
-        imshow("current card", cardt);
+        cv::imshow("current card", cardt);
         im2.NewMat(cardt);
         //im2.BlurImage(blllurr.data);
         cv::blur(cardt, blllurr, Size(3, 3));
@@ -305,30 +322,36 @@ int main(int argc, char **argv)
         cv::imshow("edges", edddges);
         //eKernel.FindEdgeMatrix2(blllurr.data,edddges.data,cardt.cols,cardt.rows);
         
-        findContours(edddges, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+        findContours(edddges, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
         Mat drawing = Mat::zeros(cardt.size(), CV_8UC3);
+        sort(contours.begin(),contours.end(),[](const std::vector<cv::Point>&c1,const std::vector<cv::Point>&c2){
+            return cv::contourArea(c1,false)<cv::contourArea(c2,false);
+        });
+
         for (size_t i = 0; i < contours.size(); i++)
         {
             Scalar color;
             cardShape = Shape(contours[i]);
             if (cardShape.IsShapeSquare())
             {
-                imshow("current card", cardt);
+                cv::imshow("current card", cardt);
                 color = Scalar(255, 255, 255);
                 corners = cardShape.GetCorners();
                 temp = cardShape.CutOutShape(corners, cardt.cols, cardt.rows, cardt);
                 testCard = card(temp, false, corners);
                 testCard.DetermenRank();
+                testCard.DetermenSuit();
+                std::cout<<"RANK AND SUIT: "<<testCard.GetRank()<<"  "<<testCard.GetSuit()<<std::endl;
             }
             else
                 color = Scalar(255, 255, 0);
             drawContours(drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0);
         }
-        imshow("contours", drawing);
+        cv::imshow("contours", drawing);
         cv::waitKey(0);
     }
 
-    imshow("Webcam", frame);
+    cv::imshow("Webcam", frame);
     camera >> frame;
     cv::waitKey(0);
 
