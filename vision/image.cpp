@@ -424,7 +424,7 @@ void image::DetermenCards(std::vector<Shape> shapes, std::vector<card> &returnCa
             std::cout << "Shape is square" << std::endl;
             std::vector<place> corners = shapes[i].GetCorners();
             cv::Mat temp = shapes[i].CutOutShape(corners, width, height, picture);
-            returnCards.push_back(card(temp, false,corners));
+            returnCards.push_back(card(temp, false,corners,false));
             returnCards[i].DetermenRank();
         }
         /*cards.push_back(card());

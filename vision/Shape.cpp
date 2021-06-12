@@ -28,6 +28,7 @@ bool Shape::IsShapeSquare()
         //if(prevPoint.GetX())
     }
     for(int i=0; i<tempIndexes.size();i++){
+        std::cout<<"point "<<i<<" will be removed\n";
         corners.erase(corners.begin()+tempIndexes[i]);
     }
     std::cout<<"corner size: "<<corners.size()<<std::endl;

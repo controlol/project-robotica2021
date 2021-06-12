@@ -24,9 +24,10 @@ private:
     std::vector<cv::Mat> ranks;
     std::vector<cv::Mat> ranks2;
     std::vector<cv::Mat> suits;
+    std::vector<cv::Mat>allCards;
 
 public:
-    card(cv::Mat image, bool, std::vector<place> corner);
+    card(cv::Mat image, bool, std::vector<place> corner,bool doCompleteCard);
     ~card();
     card();
     void DetermenRank();
@@ -40,5 +41,9 @@ public:
     void sharpenCard(cv::Mat image);
     std::string GetRank();
     std::string GetSuit();
+    cv::Mat allignLeftBottom(cv::Mat thisCard, int width, int height);
+
+    void CompleteCard();
+    void GetCompleteCard();
 };
 #endif
