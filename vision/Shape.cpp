@@ -5,7 +5,7 @@ const uchar BLACK = 0;
 
 bool Shape::IsShapeSquare()
 {
-    bool answer = false;
+    bool answer = false; 
     if(pixels.empty())  
         return false;
     GetCorners();
@@ -328,13 +328,19 @@ Shape::Shape(std::vector<place> listOfPixels)
 
 Shape::Shape(std::vector<cv::Point> listOfPixels)
 {
+    //cvpixels=listOfPixels;
+    //polylines(pixelsCV, listOfPixels, true, cv::Scalar(255));
     std::vector<place> newList;
     for (size_t i = 0; i < listOfPixels.size(); i++)
     {
         newList.push_back(place(listOfPixels[i].x,listOfPixels[i].y));
     }
-    
-
+    std::vector<cv::Point> out;
+    cv::approxPolyDP(listOfPixels,out,12,true);
+    for (size_t i = 0; i < out.size(); i++)
+    {
+        this->corners.push_back(place(out[i].x,out[i].y));
+    }
     this->pixels = newList;
 }
 

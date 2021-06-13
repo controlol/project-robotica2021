@@ -574,7 +574,7 @@ void card::GetCompleteCard()
         }
         std::cout << "cardNumber: " << rankNumber + 1 << std::endl;
         //cv::imshow("compared to", allCards[s*13+r]);
-        cv::waitKey(0);
+        //cv::waitKey(0);
         }
     }
     std::cout << "FINAL card suit: " << rankNumber + 1 <<" "<<suitNumber<< std::endl;

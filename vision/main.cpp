@@ -239,8 +239,11 @@ int main(int argc, char **argv)
     std::cout << camera.get(CAP_PROP_AUTO_WB) << std::endl;
     std::cout << camera.get(CAP_PROP_HUE) << std::endl;
     //camera.set(CAP_PROP_BRIGHTNESS,120);
-    camera.set(CAP_PROP_CONTRAST, 32);
+    //camera.set(CAP_PROP_CONTRAST, 32);
     //camera.set(CAP_PROP_SATURATION,100);
+    //1280 720
+    camera.set(CAP_PROP_FRAME_WIDTH,1280);
+    camera.set(CAP_PROP_FRAME_HEIGHT,960);
     camera.set(CAP_PROP_AUTO_WB, 1);
     if (!camera.isOpened())
     {
@@ -289,9 +292,19 @@ int main(int argc, char **argv)
     cardPlaces.push_back(cv::Rect(200, 150, 100, 150)); //oc3
     cardPlaces.push_back(cv::Rect(300, 150, 100, 150)); //oc4
     cardPlaces.push_back(cv::Rect(400, 150, 100, 150)); //oc5
+    cv::Mat qualityTest;
+
+
+        camera.grab();
+        camera.retrieve(qualityTest);
+        cv::imshow("testttsss", qualityTest);
+
+camera.set(CAP_PROP_FRAME_WIDTH,1024);
+    camera.set(CAP_PROP_FRAME_HEIGHT,768);
 
     while (cv::waitKey(1000) < 0)
     {
+        camera >> frame;
         cv::line(frame, cv::Point(100, 0), cv::Point(100, 400), Scalar(255, 0, 0));
         cv::line(frame, cv::Point(200, 0), cv::Point(200, 400), Scalar(255, 0, 0));
         cv::line(frame, cv::Point(300, 0), cv::Point(300, 400), Scalar(255, 0, 0));
@@ -301,7 +314,9 @@ int main(int argc, char **argv)
         cv::line(frame, cv::Point(0, 150), cv::Point(500, 150), Scalar(255, 0, 0));
         cv::line(frame, cv::Point(0, 300), cv::Point(500, 300), Scalar(255, 0, 0));
         cv::imshow("Webcam", frame);
-        camera >> frame;
+        
+        std::cout<<frame.rows<<" "<<frame.cols<<std::endl;
+        std::cout<<qualityTest.rows<<" "<<qualityTest.cols<<std::endl;
     }
 
     std::vector<std::vector<std::string>> allCards;
