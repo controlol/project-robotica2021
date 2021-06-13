@@ -5,14 +5,8 @@ const uchar BLACK = 0;
 
 bool Shape::IsShapeSquare()
 {
-<<<<<<< HEAD
     bool answer = false; 
     if(pixels.empty())  
-=======
-    std::cout << "checking for square?\n "<<pixels.size();
-    bool answer = false;
-    if (pixels.empty())
->>>>>>> ab00cb8002afbd09e59936259729a25c684a6b4d
         return false;
     GetCorners();
     std::vector<int> tempIndexes;
@@ -382,27 +376,19 @@ Shape::Shape(std::vector<place> listOfPixels)
 
 Shape::Shape(std::vector<cv::Point> listOfPixels)
 {
-<<<<<<< HEAD
     //cvpixels=listOfPixels;
     //polylines(pixelsCV, listOfPixels, true, cv::Scalar(255));
-=======
-    //cvPixels = listOfPixels;
->>>>>>> ab00cb8002afbd09e59936259729a25c684a6b4d
     std::vector<place> newList;
     for (size_t i = 0; i < listOfPixels.size(); i++)
     {
         newList.push_back(place(listOfPixels[i].x, listOfPixels[i].y));
     }
-<<<<<<< HEAD
     std::vector<cv::Point> out;
     cv::approxPolyDP(listOfPixels,out,12,true);
     for (size_t i = 0; i < out.size(); i++)
     {
         this->corners.push_back(place(out[i].x,out[i].y));
     }
-=======
-
->>>>>>> ab00cb8002afbd09e59936259729a25c684a6b4d
     this->pixels = newList;
 }
 
