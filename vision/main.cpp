@@ -274,49 +274,53 @@ int main(int argc, char **argv)
     std::vector<card> cards;
     std::vector<cv::Rect> cardPlaces;
 
-    cardPlaces.push_back(cv::Rect(0, 0, 100, 150));     //player 1 card 1
-    cardPlaces.push_back(cv::Rect(100, 0, 100, 150));   //p1c2
-    cardPlaces.push_back(cv::Rect(200, 0, 100, 150));   //p2c1
-    cardPlaces.push_back(cv::Rect(300, 0, 100, 150));   //p2c2
-    cardPlaces.push_back(cv::Rect(400, 0, 100, 150));   //p3c1
-    cardPlaces.push_back(cv::Rect(500, 0, 100, 150));   //p3c2
-    cardPlaces.push_back(cv::Rect(0, 300, 100, 150));   //p4c1
-    cardPlaces.push_back(cv::Rect(100, 300, 100, 150)); //p4c2
-    cardPlaces.push_back(cv::Rect(200, 300, 100, 150)); //p5c1
-    cardPlaces.push_back(cv::Rect(300, 300, 100, 150)); //p5c2
-    cardPlaces.push_back(cv::Rect(400, 300, 100, 150)); //p6c1
-    cardPlaces.push_back(cv::Rect(500, 300, 100, 150)); //p6c2
+    cardPlaces.push_back(cv::Rect(50, 80, 196, 253));     //player 1 card 1
+    cardPlaces.push_back(cv::Rect(246, 80, 196, 253));   //p1c2
+    cardPlaces.push_back(cv::Rect(443, 80, 196, 253));   //p2c1
+    cardPlaces.push_back(cv::Rect(640, 80, 196, 253));   //p2c2
+    cardPlaces.push_back(cv::Rect(837, 80, 196, 253));   //p3c1
+    cardPlaces.push_back(cv::Rect(1034, 80, 196, 253));   //p3c2
+    cardPlaces.push_back(cv::Rect(50, 586, 196, 253));   //p4c1
+    cardPlaces.push_back(cv::Rect(246, 586, 196, 253)); //p4c2
+    cardPlaces.push_back(cv::Rect(443, 586, 196, 253)); //p5c1
+    cardPlaces.push_back(cv::Rect(640, 586, 196, 253)); //p5c2
+    cardPlaces.push_back(cv::Rect(837, 586, 196, 253)); //p6c1
+    cardPlaces.push_back(cv::Rect(1034, 586, 196, 253)); //p6c2
 
-    cardPlaces.push_back(cv::Rect(0, 150, 100, 150));   //opencard 1
-    cardPlaces.push_back(cv::Rect(100, 150, 100, 150)); //oc2
-    cardPlaces.push_back(cv::Rect(200, 150, 100, 150)); //oc3
-    cardPlaces.push_back(cv::Rect(300, 150, 100, 150)); //oc4
-    cardPlaces.push_back(cv::Rect(400, 150, 100, 150)); //oc5
+    cardPlaces.push_back(cv::Rect(148, 333, 196, 253));   //opencard 1
+    cardPlaces.push_back(cv::Rect(340, 333, 196, 253)); //oc2
+    cardPlaces.push_back(cv::Rect(536, 333, 196, 253)); //oc3
+    cardPlaces.push_back(cv::Rect(723, 333, 196, 253)); //oc4
+    cardPlaces.push_back(cv::Rect(935, 333, 196, 253)); //oc5
     cv::Mat qualityTest;
 
 
         camera.grab();
         camera.retrieve(qualityTest);
-        cv::imshow("testttsss", qualityTest);
+        //cv::imshow("testttsss", qualityTest);
 
-camera.set(CAP_PROP_FRAME_WIDTH,1024);
-    camera.set(CAP_PROP_FRAME_HEIGHT,768);
+camera.set(CAP_PROP_FRAME_WIDTH,3840);
+    camera.set(CAP_PROP_FRAME_HEIGHT,2160);
 
     while (cv::waitKey(1000) < 0)
     {
         camera >> frame;
-        cv::line(frame, cv::Point(100, 0), cv::Point(100, 400), Scalar(255, 0, 0));
-        cv::line(frame, cv::Point(200, 0), cv::Point(200, 400), Scalar(255, 0, 0));
-        cv::line(frame, cv::Point(300, 0), cv::Point(300, 400), Scalar(255, 0, 0));
-        cv::line(frame, cv::Point(400, 0), cv::Point(400, 400), Scalar(255, 0, 0));
-        cv::line(frame, cv::Point(500, 0), cv::Point(500, 400), Scalar(255, 0, 0));
+        /*cv::line(frame, cv::Point(246, 0), cv::Point(246, 960), Scalar(255, 0, 0));
+        cv::line(frame, cv::Point(443, 0), cv::Point(443, 960), Scalar(255, 0, 0));
+            cv::line(frame, cv::Point(640, 0), cv::Point(640, 960), Scalar(255, 0, 0));
+        cv::line(frame, cv::Point(837, 0), cv::Point(837, 960), Scalar(255, 0, 0));
+        cv::line(frame, cv::Point(1034, 0), cv::Point(1034, 960), Scalar(255, 0, 0));
 
-        cv::line(frame, cv::Point(0, 150), cv::Point(500, 150), Scalar(255, 0, 0));
-        cv::line(frame, cv::Point(0, 300), cv::Point(500, 300), Scalar(255, 0, 0));
+        cv::line(frame, cv::Point(0, 333), cv::Point(1280, 333), Scalar(255, 0, 0));
+        cv::line(frame, cv::Point(0, 586), cv::Point(1280, 586), Scalar(255, 0, 0));
+
+        cv::line(frame, cv::Point(0, 80), cv::Point(1280, 80), Scalar(255, 0, 0));
+        cv::line(frame, cv::Point(0, 840), cv::Point(1280, 840), Scalar(255, 0, 0));*/
+
         cv::imshow("Webcam", frame);
         
-        std::cout<<frame.rows<<" "<<frame.cols<<std::endl;
-        std::cout<<qualityTest.rows<<" "<<qualityTest.cols<<std::endl;
+        //td::cout<<frame.rows<<" "<<frame.cols<<std::endl;
+        //std::cout<<qualityTest.rows<<" "<<qualityTest.cols<<std::endl;
     }
 
     std::vector<std::vector<std::string>> allCards;
