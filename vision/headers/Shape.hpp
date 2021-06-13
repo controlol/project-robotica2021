@@ -13,6 +13,7 @@ private:
     int LowerAreaThreshold = 600;
     int width, height;
     std::vector<place> corners;
+    std::vector<cv::Point> cvPixels;
 public:
     Shape(std::vector<place> listOfPixels);
     Shape(std::vector<cv::Point> listOfPixels);
