@@ -302,9 +302,9 @@ int main(int argc, char **argv)
 camera.set(CAP_PROP_FRAME_WIDTH,3840);
     camera.set(CAP_PROP_FRAME_HEIGHT,2160);
 
-    while (cv::waitKey(1000) < 0)
-    {
-        camera >> frame;
+    //while (cv::waitKey(1000) < 0)
+   // {
+       // camera >> frame;
         /*cv::line(frame, cv::Point(246, 0), cv::Point(246, 960), Scalar(255, 0, 0));
         cv::line(frame, cv::Point(443, 0), cv::Point(443, 960), Scalar(255, 0, 0));
             cv::line(frame, cv::Point(640, 0), cv::Point(640, 960), Scalar(255, 0, 0));
@@ -317,11 +317,20 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
         cv::line(frame, cv::Point(0, 80), cv::Point(1280, 80), Scalar(255, 0, 0));
         cv::line(frame, cv::Point(0, 840), cv::Point(1280, 840), Scalar(255, 0, 0));*/
 
-        cv::imshow("Webcam", frame);
+       // cv::imshow("Webcam", frame);
         
         //td::cout<<frame.rows<<" "<<frame.cols<<std::endl;
         //std::cout<<qualityTest.rows<<" "<<qualityTest.cols<<std::endl;
-    }
+   // }
+
+   while(1){
+
+cv::imshow("Webcam", frame);
+    camera >> frame;
+        char keycode=   cv::waitKey(1000);
+        if(keycode==27)
+            break;
+       if(keycode==32){
 
     std::string allCards[7][6];
     cv::Mat cardt;
@@ -394,7 +403,7 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
                     drawContours(drawing, contours, (int)i, color, 2, LINE_8, hierarchy, 0);
                 }
                 cv::imshow("contours", drawing);
-                cv::waitKey(0);
+                //cv::waitKey(0);
             }
         //}
     //}
@@ -416,9 +425,9 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
         
     }
     //std::cout<<allCards[0];
-    cv::imshow("Webcam", frame);
-    camera >> frame;
-    cv::waitKey(0);
+    
+       }}
+    //cv::waitKey(0);
 
     // while (1)
     // {
