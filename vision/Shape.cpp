@@ -80,10 +80,10 @@ double Shape::GetDistance(place p1, place p2)
 std::vector<place> Shape::GetCorners()
 {
     std::cout << "corners?\n";
-    std::vector<cv::Point> out;
-    cv::approxPolyDP(cvPixels, out, 12, true);
-    if (out.size() == 4)
-        std::cout << "Opencv calls it a square\n";
+    //std::vector<cv::Point> out;
+    //cv::approxPolyDP(cvPixels, out, 12, true);
+    //if (out.size() == 4)
+        //std::cout << "Opencv calls it a square\n";
     if (corners.empty())
         corners = DouglasPeucker(pixels, 10);
     std::cout << "amount of corners:  " << corners.size() << std::endl;
@@ -383,8 +383,10 @@ Shape::Shape(std::vector<cv::Point> listOfPixels)
     {
         newList.push_back(place(listOfPixels[i].x, listOfPixels[i].y));
     }
-    std::vector<cv::Point> out;
+    std::cout<<listOfPixels.size();
+    std::vector<cv::Point> out=listOfPixels;
     cv::approxPolyDP(listOfPixels,out,12,true);
+    std::cout<<out.size();
     for (size_t i = 0; i < out.size(); i++)
     {
         this->corners.push_back(place(out[i].x,out[i].y));
