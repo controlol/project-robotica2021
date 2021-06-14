@@ -323,7 +323,7 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
         //std::cout<<qualityTest.rows<<" "<<qualityTest.cols<<std::endl;
     }
 
-    std::vector<std::vector<std::string>> allCards;
+    std::string allCards[7][6];
     cv::Mat cardt;
     cv::Mat blllurr;
     cv::Mat edddges;
@@ -331,15 +331,16 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
     std::vector<std::vector<cv::Point>> contours;
     std::vector<Vec4i> hierarchy;
     Shape cardShape;
+    int k = 0;
     //for (int k = 9; k > 0; k--)
     //{
         //camera >> frame;
         cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
         //if (9 % k == 0)
         //{
-            for (size_t i = 0; i < cardPlaces.size(); i++)
+            for (size_t j = 0; j < cardPlaces.size(); j++)
             {
-                cardt = grey(cardPlaces[i]);
+                cardt = grey(cardPlaces[j]);
                 blllurr = cardt.clone();
                 edddges = cardt.clone();
                 usablecard = cardt;
@@ -375,6 +376,18 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
                         testCard.GetCompleteCard();
                         std::cout << "RANK AND SUIT: " << testCard.GetRank() << "  " << testCard.GetSuit() << std::endl;
                         //allCards.push_back(std::vector<std::string> "p"+i/2+"-"+testCard.GetRank()+"-"+testcard.GetSuit());
+                        if(j>11){
+                            
+                            std::string message = "o"+std::to_string(k)+" "+testCard.GetRank()+" "+testCard.GetSuit();
+                            allCards[6][k]=message;
+                            if(i==contours.size()-1)
+                                k++;
+                        }
+                        else{
+                            std::string message;
+                            message="P"+std::to_string(j/2)+" "+testCard.GetRank()+" "+testCard.GetSuit();
+                            allCards[(j/2)][j%2]=message;
+                        }
                     }
                     else
                         color = Scalar(255, 255, 0);
@@ -385,6 +398,23 @@ camera.set(CAP_PROP_FRAME_WIDTH,3840);
             }
         //}
     //}
+
+      for (size_t i = 0; i < 7; i++)
+    {
+        for (size_t j = 0; j < 5; j++)
+        {
+            if(allCards[i][j].empty()){
+                if(i<6 && j<2)
+                    std::cout<<"player " <<i+1<<" is missching card "<<j+1<<std::endl;
+                else if(i==6 )
+                    std::cout<<"open card " <<j+1<<" is missching "<<std::endl;
+            }
+            else{
+                std::cout<<allCards[i][j]<<std::endl;
+            }
+        }
+        
+    }
     //std::cout<<allCards[0];
     cv::imshow("Webcam", frame);
     camera >> frame;
