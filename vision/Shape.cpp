@@ -1,12 +1,12 @@
 #include "Shape.hpp"
-
+//#define DEBUG
 const uchar WHITE = 255;
 const uchar BLACK = 0;
 
 bool Shape::IsShapeSquare()
 {
-    bool answer = false; 
-    if(pixels.empty())  
+    bool answer = false;
+    if (pixels.empty())
         return false;
     GetCorners();
     std::vector<int> tempIndexes;
@@ -25,15 +25,21 @@ bool Shape::IsShapeSquare()
         double angle = 180 - acos(cosb) * 180 / M_PI;
         if (angle > 120)
             tempIndexes.push_back(i);
+#ifdef DEBUG
         std::cout << "angle between the points is: " << angle;
-        //if(prevPoint.GetX())
+//if(prevPoint.GetX())
+#endif
     }
     for (int i = 0; i < tempIndexes.size(); i++)
     {
+#ifdef DEBUG
         std::cout << "point " << i << " will be removed\n";
+#endif
         corners.erase(corners.begin() + tempIndexes[i]);
     }
+#ifdef DEBUG
     std::cout << "corner size: " << corners.size() << std::endl;
+#endif
     if (corners.size() == 4)
     {
         // IsPointWrong(corners);
@@ -79,18 +85,21 @@ double Shape::GetDistance(place p1, place p2)
 
 std::vector<place> Shape::GetCorners()
 {
-    std::cout << "corners?\n";
+    //std::cout << "corners?\n";
     //std::vector<cv::Point> out;
     //cv::approxPolyDP(cvPixels, out, 12, true);
     //if (out.size() == 4)
-        //std::cout << "Opencv calls it a square\n";
+    //std::cout << "Opencv calls it a square\n";
     if (corners.empty())
         corners = DouglasPeucker(pixels, 10);
+#ifdef DEBUG
     std::cout << "amount of corners:  " << corners.size() << std::endl;
+
     for (int i = 0; i < corners.size(); i++)
     {
         std::cout << "corner " << corners[i] << std::endl;
     }
+#endif
     return corners;
 }
 
@@ -132,7 +141,7 @@ bool Shape::IsThisShapeACard(int width, int height)
     //place bottomLeft = place(mostLeft.GetX(),bottom.GetY());
     int width2 = mostLeft.GetX() - mostRight.GetX();
     int height2 = top.GetY() - bottom.GetY();
-    std::cout << "the area is: " << width2 * height2 << std::endl;
+    //std::cout << "the area is: " << width2 * height2 << std::endl;
     if (width2 * height2 >= LowerAreaThreshold)
     {
 
@@ -207,7 +216,7 @@ double *Shape::GetLine(place point1, place point2)
 
 cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv::Mat originalImage)
 {
-    std::cout << "starting the cutout" << std::endl;
+    //std::cout << "starting the cutout" << std::endl;
     if (points.size() < 4)
         return originalImage;
     // int x = points[0].GetX();
@@ -233,7 +242,7 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
     int topRight = 0;
     int bottomleft = topleft;
     int bottemright = topRight;
-    std::cout << "going to search the corners" << std::endl;
+    // std::cout << "going to search the corners" << std::endl;
     /* for (int i = 0; i < points.size() - 1; i++)
     {
         if (corners[0][0].x > points[i].GetX() && corners[0][0].y > points[i].GetY())
@@ -269,32 +278,32 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
             topleft = (points[i].GetX() + points[i].GetY());
             corners[0][0].x = points[i].GetX();
             corners[0][0].y = points[i].GetY();
-            std::cout << "found topleft" << std::endl;
+            //std::cout << "found topleft" << std::endl;
         }
         if ((points[i].GetX() - points[i].GetY()) > topRight)
         {
             topRight = (points[i].GetX() - points[i].GetY());
             corners[0][1].x = points[i].GetX();
             corners[0][1].y = points[i].GetY();
-            std::cout << "found topright" << std::endl;
+            //std::cout << "found topright" << std::endl;
         }
         if ((points[i].GetX() + points[i].GetY()) > bottemright)
         {
             bottemright = (points[i].GetX() + points[i].GetY());
             corners[0][2].x = points[i].GetX();
             corners[0][2].y = points[i].GetY();
-            std::cout << "found bottomright" << std::endl;
+            //std::cout << "found bottomright" << std::endl;
         }
         if ((points[i].GetX() - points[i].GetY()) < bottomleft)
         {
             bottomleft = (points[i].GetX() - points[i].GetY());
             corners[0][3].x = points[i].GetX();
             corners[0][3].y = points[i].GetY();
-            std::cout << "found bottomleft " << std::endl;
+            //std::cout << "found bottomleft " << std::endl;
         }
     }
 
-    std::cout << "calculating the length" << std::endl;
+    // std::cout << "calculating the length" << std::endl;
     double cardwidth = lenght(corners[0], corners[1]);
     double cardlength = lenght(corners[0], corners[3]);
     /*if (cardwidth > cardlength)
@@ -306,7 +315,7 @@ cv::Mat Shape::CutOutShape(std::vector<place> points, int width, int height, cv:
         corners[0][2] = corners[0][1];
         corners[0][1] = temp;
     }*/
-    std::cout << "cutout shape" << std::endl;
+    // std::cout << "cutout shape" << std::endl;
     /* const cv::Point *corner_list[1] = {corners[0]};
     int num_points = 4;
     int num_polygons = 1;
@@ -318,8 +327,10 @@ std::cout<<"actual cut out"<<std::endl;
     cv::bitwise_and(originalImage, mask, result);
     cv::imshow("ujyhtgrfde",result);*/
     std::vector<cv::Point2f> source, dest;
+#ifdef DEBUG
     std::cout << "corners from left to right" << points[0] << "] [" << points[1] << "] [" << points[2] << "] [" << points[3] << "] [" << points[4] << std::endl;
     std::cout << "corners from left to right" << corners[0][0] << " " << corners[0][1] << " " << corners[0][2] << " " << corners[0][3] << std::endl;
+#endif
     source.push_back(corners[0][0]);
     source.push_back(corners[0][1]);
     source.push_back(corners[0][3]);
@@ -331,11 +342,11 @@ std::cout<<"actual cut out"<<std::endl;
     dest.push_back(cv::Point2f(outputWidth, 0));
     dest.push_back(cv::Point2f(0, outputHeight));
     dest.push_back(cv::Point2f(outputWidth, outputHeight));
-    std::cout << "get perspective stuff" << std::endl;
+    //std::cout << "get perspective stuff" << std::endl;
     cv::Mat warpMatrix = cv::getPerspectiveTransform(source, dest);
     if (warpMatrix.empty())
         std::cout << "The warp perspevtive gettinh wnt wrong" << std::endl;
-    std::cout << "warp shape" << std::endl;
+    //std::cout << "warp shape" << std::endl;
     try
     {
         cv::warpPerspective(originalImage, outputImage, warpMatrix, cv::Size(outputWidth, outputHeight));
@@ -344,8 +355,10 @@ std::cout<<"actual cut out"<<std::endl;
     {
         std::cout << "Exeption warping image: " << ex.what() << std::endl;
     }
+#ifdef DEBUG
     cv::imshow("sdhlfhsod", outputImage);
     std::cout << "whoooohoooo" << std::endl;
+#endif
 
     //cv::cvtColor(outputImage, outputImage, cv::COLOR_BGR2GRAY)   ;
     //cv::threshold(outputImage,outputImage,30,255,1);
@@ -383,13 +396,15 @@ Shape::Shape(std::vector<cv::Point> listOfPixels)
     {
         newList.push_back(place(listOfPixels[i].x, listOfPixels[i].y));
     }
-    std::cout<<listOfPixels.size();
-    std::vector<cv::Point> out=listOfPixels;
-    cv::approxPolyDP(listOfPixels,out,12,true);
-    std::cout<<out.size();
+#ifdef DEBUG
+    std::cout << listOfPixels.size();
+#endif
+    std::vector<cv::Point> out = listOfPixels;
+    cv::approxPolyDP(listOfPixels, out, 12, true);
+    //std::cout << out.size();
     for (size_t i = 0; i < out.size(); i++)
     {
-        this->corners.push_back(place(out[i].x,out[i].y));
+        this->corners.push_back(place(out[i].x, out[i].y));
     }
     this->pixels = newList;
 }

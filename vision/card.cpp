@@ -1,5 +1,7 @@
 #include "card.hpp"
 
+//#define DEBUG
+
 void card::DetermenRank()
 {
     /* const char *path="/home/pi/Desktop/git/project-robotica2021/vision/images/rank.png";
@@ -41,9 +43,11 @@ void card::DetermenRank()
         std::cout<<"cols: "<<ranks[k].cols<<std::endl;
         std::cout<<"rows: "<<ranks[k].rows<<std::endl;*/
         absdiff(rankImage, ranks[k], output);
-        //absdiff(rankImage,ranks2[k],output2);
+//absdiff(rankImage,ranks2[k],output2);
+#ifdef DEBUG
         cv::imshow("compared to", ranks[k]);
         cv::imshow("result", output);
+#endif
         //v::imshow("result2", output2);
 
         for (size_t i = 0; i < width * height; i++)
@@ -51,85 +55,85 @@ void card::DetermenRank()
             ranksum += output.data[i];
             //ranksum2+=output2.data[i];
         }
-        std::cout << ranksum << std::endl;
+        //std::cout << ranksum << std::endl;
         //std::cout<<ranksum2<<std::endl;
         rankdiff = ranksum / 255;
         //rankdiff2=ranksum2/255;
         if (rankdiff < bestRankMatchDiff)
         {
             bestRankMatchDiff = rankdiff;
+#ifdef DEBUG
             std::cout << "best card was: " << cardNumber << std::endl;
+#endif
             cardNumber = k;
+#ifdef DEBUG
             std::cout << "best card is now: " << cardNumber << std::endl;
+#endif
         }
-        /*if(rankdiff2<bestRankMatchDiff2){
+/*if(rankdiff2<bestRankMatchDiff2){
             bestRankMatchDiff2=rankdiff2;
             std::cout<<"2best card was: "<<cardNumber2<<std::endl;
             cardNumber2=k;
             std::cout<<"2best card is now: "<<cardNumber2<<std::endl;
         }*/
+#ifdef DEBUG
         std::cout << "cardNumber: " << cardNumber + 1 << std::endl;
         //std::cout << "2cardNumber: " << cardNumber2+1 << std::endl;
         cv::imshow("compared to", ranks[k]);
-        //std::cout << "rank: " << rank << std::endl;
-        //cv::waitKey(0);
+//std::cout << "rank: " << rank << std::endl;
+//cv::waitKey(0);
+#endif
     }
     /*if(cardNumber==cardNumber2) 
             std::cout << "final cardNumber: " << cardNumber+1 << std::endl;*/
+#ifdef DEBUG
     std::cout << "FINAL cardNumber: " << cardNumber + 1 << std::endl;
+#endif
     // cv::waitKey(0);
     rank = static_cast<Ranks>(cardNumber);
-    /* std::cout<<"did i guess correct? y/n\n"<<std::endl;
-        char key = cv::waitKey(0);
-        std::string name;
-        if(key){
-            std::cout<<"what was it? (ace,two,three,four,five,six,seven,eight,nine,ten,jack,queen,king)\n"<<std::endl;
-            std::cin>>name;
-            
-        } */
 }
 std::string card::GetRank()
 {
     switch (rank)
     {
     case ace:
-        return "ace";
+        return "a";
         break;
     case two:
-        return "two";
+        return "2";
         break;
     case three:
-        return "three";
+        return "3";
         break;
     case four:
-        return "four";
+        return "4";
         break;
     case five:
-        return "five";
+        return "5";
         break;
     case six:
-        return "six";
+        return "6";
         break;
     case seven:
-        return "seven";
+        return "7";
         break;
     case eight:
-        return "eight";
+        return "8";
         break;
     case nine:
-        return "nine";
+        return "9";
         break;
     case ten:
-        return "ten";
+        return "10";
         break;
     case jack:
-        return "jack";
+        return "j";
         break;
     case queen:
-        return "queen";
+        return "q";
         break;
     case king:
-        return "king";
+        return "k";
         break;
 
     default:
@@ -142,16 +146,16 @@ std::string card::GetSuit()
     switch (suit)
     {
     case h:
-        return "heart";
+        return "h";
         break;
     case s:
-        return "spade";
+        return "s";
         break;
     case d:
-        return "diamond";
+        return "d";
         break;
     case c:
-        return "club";
+        return "c";
         break;
 
     default:
@@ -305,27 +309,37 @@ void card::DetermenSuit()
         std::cout<<"cols: "<<ranks[k].cols<<std::endl;
         std::cout<<"rows: "<<ranks[k].rows<<std::endl;*/
         absdiff(suitImage, suits[k], output);
+#ifdef DEBUG
         cv::imshow("compared to", suits[k]);
         cv::imshow("result", output);
+#endif
 
         for (size_t i = 0; i < width * height; i++)
         {
             ranksum += output.data[i];
         }
-        std::cout << ranksum << std::endl;
+        //std::cout << ranksum << std::endl;
         rankdiff = ranksum / 255;
         if (rankdiff < bestRankMatchDiff)
         {
             bestRankMatchDiff = rankdiff;
+#ifdef DEBUG
             std::cout << "best card was: " << cardNumber << std::endl;
+#endif
             cardNumber = k;
+#ifdef DEBUG
             std::cout << "best card is now: " << cardNumber << std::endl;
+#endif
         }
+
         std::cout << "cardNumber: " << cardNumber + 1 << std::endl;
         cv::imshow("compared to", suits[k]);
         //cv::waitKey(0);
     }
-    std::cout << "FINAL card suit: " << cardNumber + 1 << std::endl;
+#ifdef DEBUG
+            std::cout
+        << "FINAL card suit: " << cardNumber + 1 << std::endl;
+#endif
     // cv::waitKey(0);
     suit = static_cast<Suits>(cardNumber);
 }
@@ -533,7 +547,7 @@ void card::sharpenCard(cv::Mat image)
 void card::CompleteCard()
 {
     cv::threshold(cardImage, cardImage, 130, 255, cv::THRESH_BINARY);
-    cv::imshow("THE card",cardImage);
+    cv::imshow("THE card", cardImage);
 }
 void card::GetCompleteCard()
 {
@@ -547,44 +561,55 @@ void card::GetCompleteCard()
     cv::Mat output(height, width, cardImage.type());
     for (int s = 0; s < 4; s++)
     {
-        for(int r=0; r<13;r++){
-        ranksum = 0;
-        /*std::cout<<"cols: "<<rankImage.cols<<std::endl;
+        for (int r = 0; r < 13; r++)
+        {
+            ranksum = 0;
+            /*std::cout<<"cols: "<<rankImage.cols<<std::endl;
         std::cout<<"rows: "<<rankImage.rows<<std::endl;
         std::cout<<"cols: "<<ranks[k].cols<<std::endl;
         std::cout<<"rows: "<<ranks[k].rows<<std::endl;*/
-        absdiff(cardImage, allCards[s*13+r], output);
-        cv::imshow("compared to", allCards[s*13+r]);
-        cv::imshow("result", output);
+            absdiff(cardImage, allCards[s * 13 + r], output);
+            #ifdef DEBUG
+            cv::imshow("compared to", allCards[s * 13 + r]);
+            cv::imshow("result", output);
+            #endif
 
-        for (size_t i = 0; i < width * height; i++)
-        {
-            if(output.data[i]>50)
-                ranksum += output.data[i];
-        }
-        std::cout << ranksum << std::endl;
-        rankdiff = ranksum / 255;
-        if (rankdiff < bestRankMatchDiff)
-        {
-            bestRankMatchDiff = rankdiff;
-            std::cout << "best card was: " << rankNumber+1 << std::endl;
-            rankNumber = r;
-            suitNumber = s;
-            std::cout << "best card is now: " << rankNumber +1<<" "<<suitNumber<< std::endl;
-        }
-        std::cout << "cardNumber: " << rankNumber + 1 << std::endl;
-        //cv::imshow("compared to", allCards[s*13+r]);
-        //cv::waitKey(0);
+            for (size_t i = 0; i < width * height; i++)
+            {
+                if (output.data[i] > 50)
+                    ranksum += output.data[i];
+            }
+            //std::cout << ranksum << std::endl;
+            rankdiff = ranksum / 255;
+            if (rankdiff < bestRankMatchDiff)
+            {
+                bestRankMatchDiff = rankdiff;
+                #ifdef DEBUG
+                std::cout << "best card was: " << rankNumber + 1 << std::endl;
+                #endif
+                rankNumber = r;
+                suitNumber = s;
+                #ifdef DEBUG
+                std::cout << "best card is now: " << rankNumber + 1 << " " << suitNumber << std::endl;
+                #endif
+            }
+            #ifdef DEBUG
+            std::cout << "cardNumber: " << rankNumber + 1 << std::endl;
+            #endif
+            //cv::imshow("compared to", allCards[s*13+r]);
+            //cv::waitKey(0);
         }
     }
-    std::cout << "FINAL card suit: " << rankNumber + 1 <<" "<<suitNumber<< std::endl;
+    #ifdef DEBUG
+    std::cout << "FINAL card suit: " << rankNumber + 1 << " " << suitNumber << std::endl;
+    #endif
     // cv::waitKey(0);
     rank = static_cast<Ranks>(rankNumber);
     suit = static_cast<Suits>(suitNumber);
 }
 card::card(cv::Mat image, bool savePictures, std::vector<place> corners, bool doCompleteCard)
 {
-    std::cout << "making card\n";
+    //std::cout << "making card\n";
     cardPlace.SetX((corners[0].GetX() + corners[1].GetX() + corners[2].GetX() + corners[3].GetX()) / 4);
     cardPlace.SetY((corners[0].GetY() + corners[1].GetY() + corners[2].GetY() + corners[3].GetY()) / 4);
     this->cardImage = image;
@@ -599,7 +624,7 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners, bool do
         //CompleteCard();
         if (savePictures)
         {
-            std::cout << "waiting until key press to save current picture\n";
+            std::cout << "waiting until space press to save current picture\n";
 
             int keyCode = cv::waitKey(0);
             if (keyCode == 32)
@@ -607,7 +632,7 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners, bool do
                 try
                 {
                     cv::imwrite(imPath + "RENAMECARD.png", cardImage);
-                    std::cout << "done thisn";
+                    //std::cout << "done thisn";
                 }
                 catch (const cv::Exception &ex)
                 {
@@ -618,23 +643,24 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners, bool do
         }
         else
         {
-            std::cout << "cameHere???\n";
+            //std::cout << "cameHere???\n";
             for (int j = 0; j < 4; j++)
             {
 
                 for (int i = 0; i < 13; i++)
                 {
                     allCards.push_back(cv::imread(imPath + rankString[i] + suitString[j] + ".png", cv::IMREAD_GRAYSCALE));
-                    if(allCards[j*13+i].channels()!=1){
-                        std::cout<<"CONVER TO GREY!!!!!";
+                    if (allCards[j * 13 + i].channels() != 1)
+                    {
+                       // std::cout << "CONVER TO GREY!!!!!";
                         cv::cvtColor(allCards[i], allCards[i], cv::COLOR_BGR2GRAY);
                     }
                     //ranks2.push_back(cv::imread(imPath + rankString2[i] + ".png"));
                     //cv::cvtColor(ranks2[i],ranks2[i], cv::COLOR_BGR2GRAY);
                 }
             }
-            if(allCards.size()<52)
-            std::cout<<"SOMETHING WENT WRONG\n";
+            if (allCards.size() < 52)
+                std::cout << "SOMETHING WENT WRONG\n";
         }
     }
     else
@@ -667,7 +693,7 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners, bool do
         }
         else
         {
-            std::cout << "cameHere???\n";
+            //std::cout << "cameHere???\n";
             for (int i = 0; i < 13; i++)
             {
                 ranks.push_back(cv::imread(imPath + rankString[i] + ".png"));
@@ -686,7 +712,7 @@ card::card(cv::Mat image, bool savePictures, std::vector<place> corners, bool do
                 std::cout << "the first picture is empty\n";
         }
     }
-    std::cout << "made card\n";
+   // std::cout << "made card\n";
     //sharpenCard(cardImage);
     //cv::Mat out;
     //cv::cvtColor(image,image,cv::COLOR_GRAY2BGR);

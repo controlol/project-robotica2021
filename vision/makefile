@@ -2,7 +2,7 @@
 CC = g++
 LIBS = `pkg-config --libs opencv` -llept -ltesseract
 CFLAGS = `pkg-config --cflags opencv` -Iheaders -std=c++11 #-Wall -Wextra -funroll-loops
-OBJS = main.o image.o card.o place.o kernel.o table.o blur.o edge.o player.o shape.o moore.o spkernel.o
+OBJS = main.o image.o card.o place.o kernel.o table.o blur.o edge.o player.o shape.o moore.o spkernel.o connection.o
 
 all: edgetest
 
@@ -44,6 +44,9 @@ moore.o: headers/Moore.hpp Moore.cpp
 
 spkernel.o: headers/SinglePixelKernel.hpp SinglePixelKernel.cpp
 	$(CC) $(CFLAGS) $(LIBS) -c SinglePixelKernel.cpp -o spkernel.o
+
+connection.o: headers/Connection.hpp Connection.cpp
+	$(CC) $(CFLAGS) $(LIBS) -c Connection.cpp -o connection.o
 
 clean:
 	rm *.o edgetest
