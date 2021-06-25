@@ -1,5 +1,5 @@
 #include "Connection.hpp"
-
+#define READ_BUFFER_SIZE 256
 void Connection::SendData(std::string message)
 {
     n = write(newsockfd, message.c_str(), message.size());
@@ -20,7 +20,32 @@ bool Connection::WaitForClient()
     }
     return true;
 }
+std::string Connection::ReadData(){
+    std::string recvData;
+  char buffer[READ_BUFFER_SIZE] = {0}; // create empty buffer to prevent weird data corruption from read
+  size_t readBytes = -1;
 
+    
+  /*while ((readBytes = read(sockfd, buffer, READ_BUFFER_SIZE))) {
+    
+    if(readBytes==0) continue;
+    if(buffer[0]=='\0')continue;
+    std::cout<<"lol"<<buffer<<"lol"<<std::endl;
+    recvData.append(buffer);   
+    // all data has been read
+    if (readBytes < 256 ) break;
+  }*/
+ //int p = recv(newsockfd,buffer,256,0);
+  n = read(newsockfd,buffer,255);
+    if (n < 0) 
+         std::cout<<("ERROR reading from socket");
+    //recvData.append(buffer);
+    printf("Here is the message: %s\n",buffer);
+    printf("n is: %d\n",n);
+    printf("p is: %d\n",errno);
+    
+  return recvData;
+}
 Connection::Connection(int port)
 {
 

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <sstream>
 #include "headers/image.hpp"
 #include "Moore.hpp"
 #include "card.hpp"
@@ -114,6 +115,14 @@ int main(int argc, char **argv)
         bool result = connection.WaitForClient();
         if (result)
             std::cout << "client connect" << std::endl;
+        std::string data = connection.ReadData();
+        std::cout << data << std::endl;
+        std::cout<<"this was data\n";
+        std::stringstream string("10");
+        int n;
+        string>>n;
+        std::cout<<n;
+
 
         for (size_t i = 0; i < 10; i++)
         {
@@ -130,8 +139,17 @@ int main(int argc, char **argv)
         Shape cardShape;
         int k = 0;
         cv::cvtColor(frame, grey, COLOR_BGR2GRAY);
-
-        for (size_t j = 0; j < cardPlaces.size(); j++)
+        size_t j = 0;
+        size_t amountOfCards = 0;
+        if(n==-1){
+            j=0;
+            amountOfCards=17;
+        }
+        else{
+            j=n;
+            amountOfCards=n++;
+        }
+        for (j; j < amountOfCards; j++)
         {
             cardt = grey(cardPlaces[j]);
             blllurr = cardt.clone();
@@ -167,7 +185,7 @@ int main(int argc, char **argv)
                     //testCard.DetermenRank();
                     //testCard.DetermenSuit();
                     testCard.GetCompleteCard();
-                    //std::cout << "RANK AND SUIT: " << testCard.GetRank() << "  " << testCard.GetSuit() << std::endl;
+                    std::cout << "RANK AND SUIT: " << testCard.GetRank() << "  " << testCard.GetSuit() << std::endl;
                     //allCards.push_back(std::vector<std::string> "p"+i/2+"-"+testCard.GetRank()+"-"+testcard.GetSuit());
                     if (j > 11)
                     {
