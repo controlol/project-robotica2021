@@ -90,8 +90,8 @@ int main(int argc, char **argv)
     char check[256] = {"check"};
     Connection connection = Connection(3005);
     std::string buffer1;
-    /*
-    while (cv::waitKey(1000) != 32)
+    
+  /*  while (cv::waitKey(1000) != 32)
     {
         cv::line(frame, cv::Point(246, 0), cv::Point(246, 960), Scalar(255, 0, 0));
         cv::line(frame, cv::Point(443, 0), cv::Point(443, 960), Scalar(255, 0, 0));
@@ -117,8 +117,8 @@ int main(int argc, char **argv)
             std::cout << "client connect" << std::endl;
         std::string data = connection.ReadData();
         std::cout << data << std::endl;
-        std::cout<<"this was data\n";
-        std::stringstream string("10");
+        std::cout<<"this was data"<<data<<"\n";
+        std::stringstream string(data);
         int n;
         string>>n;
         std::cout<<n;
@@ -144,10 +144,12 @@ int main(int argc, char **argv)
         if(n==-1){
             j=0;
             amountOfCards=17;
+            std::cout<<"doing all\n";
         }
         else{
             j=n;
-            amountOfCards=n++;
+            amountOfCards=n+1;
+            std::cout<<"doing only: "<<j<<" "<<amountOfCards<<std::endl;;
         }
         for (j; j < amountOfCards; j++)
         {
@@ -191,9 +193,11 @@ int main(int argc, char **argv)
                     {
 
                         std::string message = testCard.GetRank() + "" + testCard.GetSuit();
-                        allCards[6][k] = message;
-                        if (i == contours.size() - 1)
-                            k++;
+                        //if(j-11!=k)
+                            allCards[6][j-12] = message;
+                        //if (i == contours.size() - 1&&j-11==k)
+                           // allCards[6][k] = message;
+                           // k++;
                     }
                     else
                     {

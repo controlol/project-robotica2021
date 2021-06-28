@@ -43,6 +43,7 @@ std::string Connection::ReadData(){
     printf("Here is the message: %s\n",buffer);
     printf("n is: %d\n",n);
     printf("p is: %d\n",errno);
+    recvData.append(buffer);
     
   return recvData;
 }
